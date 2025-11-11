@@ -18,6 +18,14 @@ public class GlobalExceptionHandler {
                 e.getMessage()));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalRequestParamException(Exception e) {
+        log.error(e.getMessage(), e);
+        return new ErrorResponse(400, String.format("A request parameter parsing error occurred :%n %s",
+                e.getMessage()));
+    }
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(NotFoundException e) {
@@ -31,7 +39,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(500, "An unexpected error occurred.");
     }
 
-    public record ErrorResponse(int statusCode, String message) {
+    public record ErrorResponse(int statusCode, String error) {
     }
 }
 
