@@ -4,9 +4,11 @@ import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.dto.ObjectIdDto;
-import ru.yandex.practicum.filmorate.model.dto.film.*;
+import ru.yandex.practicum.filmorate.model.dto.film.FilmCreateDto;
+import ru.yandex.practicum.filmorate.model.dto.film.FilmUpdateDto;
 import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.util.Validators;
 
@@ -73,9 +75,7 @@ public class FilmMapper {
             List<Genre> genresOfFilm = filmUpdateDto.getGenres().get().stream()
                     .mapToInt(ObjectIdDto::getId)
                     .boxed()
-                    .peek(genreId -> {
-                        validators.validateGenreExists(genreId, getClass());
-                    })
+                    .peek(genreId -> validators.validateGenreExists(genreId, getClass()))
                     .map(genreService::findById)
                     .toList();
             filmBuilder.genres(new ArrayList<>(genresOfFilm));

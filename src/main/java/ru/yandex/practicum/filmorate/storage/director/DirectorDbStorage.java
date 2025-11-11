@@ -50,15 +50,6 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public Director findById(Integer directorId) {
-        String query = """
-                SELECT * FROM director
-                WHERE id = ?;
-                """;
-        return jdbcTemplate.queryForObject(query, mapper, directorId);
-    }
-
-    @Override
     public List<Director> findByFilm(Integer filmId) {
         String query = """
                 SELECT d.* FROM director d
@@ -66,6 +57,15 @@ public class DirectorDbStorage implements DirectorStorage {
                 WHERE fd.film_id = ?;
                 """;
         return jdbcTemplate.query(query, mapper, filmId);
+    }
+
+    @Override
+    public Director findById(Integer directorId) {
+        String query = """
+                SELECT * FROM director
+                WHERE id = ?;
+                """;
+        return jdbcTemplate.queryForObject(query, mapper, directorId);
     }
 
     @Override
@@ -80,18 +80,6 @@ public class DirectorDbStorage implements DirectorStorage {
             LoggedException.throwNew(ExceptionType.DIRECTOR_NOT_FOUND, getClass(), List.of(director.getId()));
         }
         return director;
-    }
-
-    @Override
-    public void delete(Integer directorId) {
-        String query = """
-                DELETE FROM director
-                WHERE id = ?;
-                """;
-        int deletedRows = jdbcTemplate.update(query, directorId);
-        if (deletedRows == 0) {
-            LoggedException.throwNew(ExceptionType.DIRECTOR_NOT_FOUND, getClass(), List.of(directorId));
-        }
     }
 
     @Override
@@ -110,6 +98,18 @@ public class DirectorDbStorage implements DirectorStorage {
         }
 
         jdbcTemplate.update(insertQuery.toString());
+    }
+
+    @Override
+    public void delete(Integer directorId) {
+        String query = """
+                DELETE FROM director
+                WHERE id = ?;
+                """;
+        int deletedRows = jdbcTemplate.update(query, directorId);
+        if (deletedRows == 0) {
+            LoggedException.throwNew(ExceptionType.DIRECTOR_NOT_FOUND, getClass(), List.of(directorId));
+        }
     }
 
     @Component

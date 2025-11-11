@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import java.sql.Date;
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,39 +65,6 @@ public class FilmDbStorage implements FilmStorage {
         Film film = result.getFirst();
         addAllAttributesToFilm(film);
         return film;
-    }
-
-    @Override
-    public List<Film> findByDirector(Integer directorId, SortOrder order) {
-        String query = """
-                SELECT f.* from film f
-                JOIN film_director fd on f.id = fd.film_id
-                WHERE fd.director_id = ?;
-                """;
-
-        switch (order) {
-            case LIKES -> {
-                query = """
-                        SELECT f.* FROM film f
-                        JOIN film_director fd ON f.id = fd.film_id
-                        JOIN "like" l ON f.id = l.film_id
-                        WHERE fd.director_id = ?
-                        GROUP BY f.id
-                        ORDER BY count(DISTINCT l.user_id) DESC;
-                        """;
-            }
-            case YEAR -> {
-                query = """
-                        SELECT f.* FROM film f
-                        JOIN film_director fd ON f.id = fd.film_id
-                        WHERE fd.director_id = ?
-                        ORDER BY f.release_date ASC;
-                        """;
-            }
-        }
-        List<Film> films =  jdbcTemplate.query(query, mapper, directorId);
-        films.forEach(this::addAllAttributesToFilm);
-        return films;
     }
 
     @Override
@@ -185,6 +152,39 @@ public class FilmDbStorage implements FilmStorage {
                     LIMIT ?;
                 """;
         return jdbcTemplate.query(query, mapper, size).stream().map(this::addAllAttributesToFilm).toList();
+    }
+
+    @Override
+    public List<Film> findByDirector(Integer directorId, SortOrder order) {
+        String query = """
+                SELECT f.* from film f
+                JOIN film_director fd on f.id = fd.film_id
+                WHERE fd.director_id = ?;
+                """;
+
+        switch (order) {
+            case LIKES -> {
+                query = """
+                        SELECT f.* FROM film f
+                        JOIN film_director fd ON f.id = fd.film_id
+                        JOIN "like" l ON f.id = l.film_id
+                        WHERE fd.director_id = ?
+                        GROUP BY f.id
+                        ORDER BY count(DISTINCT l.user_id) DESC;
+                        """;
+            }
+            case YEAR -> {
+                query = """
+                        SELECT f.* FROM film f
+                        JOIN film_director fd ON f.id = fd.film_id
+                        WHERE fd.director_id = ?
+                        ORDER BY f.release_date ASC;
+                        """;
+            }
+        }
+        List<Film> films = jdbcTemplate.query(query, mapper, directorId);
+        films.forEach(this::addAllAttributesToFilm);
+        return films;
     }
 
     private Set<Integer> extractGenreIdSet(Film film) {
