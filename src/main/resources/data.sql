@@ -1,8 +1,3 @@
-DELETE FROM review_feedback;
-
-DELETE FROM review;
-ALTER TABLE review ALTER COLUMN id RESTART WITH 1;
-
 DELETE FROM mpa;
 ALTER TABLE mpa ALTER COLUMN id RESTART WITH 1;
 
@@ -23,6 +18,9 @@ ALTER TABLE "user" ALTER COLUMN id RESTART WITH 1;
 
 DELETE FROM film;
 ALTER TABLE film ALTER COLUMN id RESTART WITH 1;
+
+DELETE FROM feed;
+ALTER TABLE feed ALTER COLUMN id RESTART WITH 1;
 
 DELETE FROM film_director;
 ALTER TABLE film_director ALTER COLUMN id RESTART WITH 1;
@@ -97,6 +95,11 @@ INSERT INTO friends (request_from_id, request_to_id, is_accepted) VALUES
 (1, 3, FALSE),  -- Иван (ID=1) отправил заявку Алексею (ID=3), но она еще не принята
 (2, 1, TRUE),  -- Мария (ID=2) и Иван (ID=1) - друзья (взаимная заявка от Марии подтверждена)
 (3, 2, FALSE); -- Алексей (ID=3) отправил заявку Марии (ID=2), но она еще не принята
+
+INSERT INTO feed (date, user_id, event_type, operation, entity_id) VALUES
+(NOW() - INTERVAL '4' DAY, 1, 'LIKE',   'REMOVE', 333),
+(NOW() - INTERVAL '3' DAY, 1, 'FILM',   'UPDATE', 1),
+(NOW() - INTERVAL '2' DAY, 1, 'FRIEND', 'ADD', 2);
 
 INSERT INTO review (content, is_positive, user_id, film_id, useful) VALUES
 ('Отличный сюжет и игра актеров!', TRUE, 1, 1, 1),
