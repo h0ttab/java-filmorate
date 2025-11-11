@@ -58,4 +58,8 @@ public class FilmController {
         return filmService.update(filmUpdateDto);
     }
 
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Integer id) {
+        filmService.delete(id);
+    }
 }

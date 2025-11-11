@@ -77,6 +77,10 @@ public class UserService {
         userStorage.removeFriend(userIdA, userIdB);
     }
 
+    public void delete(Integer userId) {
+        userStorage.delete(userId);
+    }
+
     public Set<User> getCommonFriends(Integer userIdA, Integer userIdB) {
         return new HashSet<>(userStorage.getCommonFriends(userIdA, userIdB));
     }
