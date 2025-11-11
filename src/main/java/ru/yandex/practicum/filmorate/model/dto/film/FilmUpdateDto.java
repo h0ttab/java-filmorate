@@ -8,6 +8,7 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import ru.yandex.practicum.filmorate.model.dto.ObjectIdDto;
 
 @Data
 @Builder
@@ -28,8 +29,10 @@ public class FilmUpdateDto {
     private Optional<Integer> duration;
 
     @NotEmpty
-    private Optional<List<GenreDto>> genres;
+    private Optional<List<ObjectIdDto>> genres;
 
     @Positive
-    private Optional<MpaDto> mpa;
+    private Optional<ObjectIdDto> mpa;
+
+    private List<ObjectIdDto> directors;
 }

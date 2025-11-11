@@ -30,6 +30,7 @@ public class FilmDbStorage implements FilmStorage {
     private final MpaService mpaService;
     private final GenreService genreService;
     private final LikeService likeService;
+    private final DirectorService directorService;
 
     private Film addAllAttributesToFilm(Film film) {
         Integer filmId = film.getId();
@@ -38,9 +39,11 @@ public class FilmDbStorage implements FilmStorage {
         Mpa mpa = mpaService.findById(mpaId);
         List<Genre> genre = genreService.findGenreByFilmId(filmId);
         List<Integer> likes = likeService.getLikesByFilmId(filmId);
+        List<Director> directors = directorService.findByFilm(filmId);
         film.setMpa(mpa);
         film.setGenres(genre);
         film.getLikes().addAll(likes);
+        film.setDirectors(directors);
         return film;
     }
 
@@ -62,6 +65,39 @@ public class FilmDbStorage implements FilmStorage {
         Film film = result.getFirst();
         addAllAttributesToFilm(film);
         return film;
+    }
+
+    @Override
+    public List<Film> findByDirector(Integer directorId, SortOrder order) {
+        String query = """
+                SELECT f.* from film f
+                JOIN film_director fd on f.id = fd.film_id
+                WHERE fd.director_id = ?;
+                """;
+
+        switch (order) {
+            case LIKES -> {
+                query = """
+                        SELECT f.* FROM film f
+                        JOIN film_director fd ON f.id = fd.film_id
+                        JOIN "like" l ON f.id = l.film_id
+                        WHERE fd.director_id = ?
+                        GROUP BY f.id
+                        ORDER BY count(DISTINCT l.user_id) DESC;
+                        """;
+            }
+            case YEAR -> {
+                query = """
+                        SELECT f.* FROM film f
+                        JOIN film_director fd ON f.id = fd.film_id
+                        WHERE fd.director_id = ?
+                        ORDER BY f.release_date ASC;
+                        """;
+            }
+        }
+        List<Film> films =  jdbcTemplate.query(query, mapper, directorId);
+        films.forEach(this::addAllAttributesToFilm);
+        return films;
     }
 
     @Override
@@ -89,8 +125,10 @@ public class FilmDbStorage implements FilmStorage {
 
         film.setId(keyHolder.getKey().intValue());
         log.info("Добавлен новый фильм: {}", film);
-
+        List<Integer> directors = film.getDirectors().stream().mapToInt(Director::getId).boxed().toList();
+        directorService.linkDirectorToFilm(film.getId(), directors, false);
         genreService.linkGenresToFilm(film.getId(), extractGenreIdSet(film), false);
+        addAllAttributesToFilm(film);
         return film;
     }
 
@@ -118,7 +156,10 @@ public class FilmDbStorage implements FilmStorage {
             LoggedException.throwNew(ExceptionType.FILM_NOT_FOUND, getClass(), List.of(film.getId()));
         }
         log.info("Обновлён фильм id {}. Новое значение: {}", film.getId(), film);
+        List<Integer> directors = film.getDirectors().stream().mapToInt(Director::getId).boxed().toList();
         genreService.linkGenresToFilm(film.getId(), extractGenreIdSet(film), true);
+        directorService.linkDirectorToFilm(film.getId(), directors, true);
+        addAllAttributesToFilm(film);
         return film;
     }
 

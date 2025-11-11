@@ -16,4 +16,6 @@ public interface FilmStorage {
     Integer delete(Integer filmId);
 
     List<Film> findTopLiked(int size);
+
+    List<Film> findByDirector(Integer directorId, SortOrder order);
 }
