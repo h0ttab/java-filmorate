@@ -65,7 +65,11 @@ public class DirectorDbStorage implements DirectorStorage {
                 SELECT * FROM director
                 WHERE id = ?;
                 """;
-        return jdbcTemplate.queryForObject(query, mapper, directorId);
+        List<Director> result = jdbcTemplate.query(query, mapper, directorId);
+        if (result.isEmpty()) {
+            LoggedException.throwNew(ExceptionType.DIRECTOR_NOT_FOUND, getClass(), List.of(directorId));
+        }
+        return result.getFirst();
     }
 
     @Override
