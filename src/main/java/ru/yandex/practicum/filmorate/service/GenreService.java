@@ -15,7 +15,7 @@ public class GenreService {
     private final GenreDbStorage genreStorage;
     private final Validators validators;
 
-    public Set<Genre> findAll() {
+    public List<Genre> findAll() {
         return genreStorage.findAll();
     }
 

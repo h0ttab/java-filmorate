@@ -2,7 +2,8 @@ package ru.yandex.practicum.filmorate.storage.genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,11 +18,12 @@ public class GenreDbStorage implements GenreStorage {
     private final RowMapper<Genre> mapper = new GenreRowMapper();
 
     @Override
-    public Set<Genre> findAll() {
+    public List<Genre> findAll() {
         String query = """
-                SELECT * FROM genre;
+                SELECT * FROM genre
+                ORDER BY id;
                 """;
-        return new HashSet<>(jdbcTemplate.query(query, mapper));
+        return jdbcTemplate.query(query, mapper);
     }
 
     @Override

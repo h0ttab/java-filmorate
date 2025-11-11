@@ -128,6 +128,23 @@ public class Validators {
         }
     }
 
+    private boolean isValidDirector(Integer directorId) {
+        String query = """
+                    SELECT
+                    CASE
+                    	WHEN ? IN (SELECT id FROM director) THEN TRUE
+                    	ELSE FALSE
+                    END;
+                """;
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(query, Boolean.class, directorId));
+    }
+
+    public void validateDirectorExists(Integer directorId, Class<?> clazz) {
+        if (!isValidDirector(directorId)) {
+            LoggedException.throwNew(ExceptionType.DIRECTOR_NOT_FOUND, clazz, List.of(directorId));
+        }
+    }
+
     private boolean isValidUser(Integer userId) {
         String query = """
                     SELECT

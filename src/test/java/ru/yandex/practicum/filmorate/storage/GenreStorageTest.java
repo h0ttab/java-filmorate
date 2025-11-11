@@ -33,7 +33,7 @@ public class GenreStorageTest {
 
     @Test
     public void testFindAll() {
-        Set<Genre> genres = storage.findAll();
+        List<Genre> genres = storage.findAll();
 
         assertThat(genres.size()).isEqualTo(6);
         assertThat(genres).allSatisfy(genre -> {

@@ -57,4 +57,9 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
                 .limit(count)
                 .toList();
     }
+
+    @Override
+    public List<Film> findByDirector(Integer directorId, SortOrder order) {
+        return List.of();
+    }
 }

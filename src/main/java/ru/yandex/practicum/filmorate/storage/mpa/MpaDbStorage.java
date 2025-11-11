@@ -19,7 +19,8 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public List<Mpa> findAll() {
         String query = """
-                SELECT * FROM mpa;
+                SELECT * FROM mpa
+                ORDER BY id;
                 """;
         return jdbcTemplate.query(query, mapper);
     }
