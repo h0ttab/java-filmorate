@@ -6,7 +6,7 @@ import java.util.Set;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 public interface GenreStorage {
-    Set<Genre> findAll();
+    List<Genre> findAll();
 
     Genre findById(Integer genreId);
 

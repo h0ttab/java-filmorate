@@ -17,11 +17,11 @@ public class GenreDbStorage implements GenreStorage {
     private final RowMapper<Genre> mapper = new GenreRowMapper();
 
     @Override
-    public Set<Genre> findAll() {
+    public List<Genre> findAll() {
         String query = """
                 SELECT * FROM genre;
                 """;
-        return new HashSet<>(jdbcTemplate.query(query, mapper));
+        return jdbcTemplate.query(query, mapper);
     }
 
     @Override
