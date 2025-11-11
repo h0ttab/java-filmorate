@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import jakarta.validation.Valid;
@@ -66,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/feed")
-    public Collection<Feed> getCommonFriends(@PathVariable Integer id) {
-        return userService.getFeeds();
+    public Collection<Feed> getFeeds(@PathVariable Integer id) {
+        return userService.getFeeds(id);
     }
 }
