@@ -20,9 +20,20 @@ public class FeedDbStorage implements FeedStorage {
     private final FeedRowMapper mapper = new FeedRowMapper();
 
     @Override
-    public List<Feed> findAll() {
-        String query = "SELECT * FROM feed ORDER BY date DESC;";
-        return jdbcTemplate.query(query, mapper);
+    public List<Feed> findAll(Integer id) {
+        String query = "SELECT * FROM feed WHERE user_id = ? ORDER BY date DESC;";
+        return jdbcTemplate.query(query, mapper, id);
+    }
+
+    @Override
+    public void save(Feed feed) {
+        String query = "INSERT INTO feed (date, user_id, event_type, operation, entity_id) VALUES (?, ?, ?, ?, ?);";
+        jdbcTemplate.update(query,
+                feed.getTimestamp(),
+                feed.getUserId(),
+                feed.getEventType(),
+                feed.getOperation(),
+                feed.getEntityId());
     }
 
     @Component
@@ -30,14 +41,14 @@ public class FeedDbStorage implements FeedStorage {
     private static class FeedRowMapper implements RowMapper<Feed> {
         @Override
         public Feed mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-            return Feed.builder()
-                    .eventId(resultSet.getInt("ID"))
-                    .timestamp(resultSet.getTimestamp("TIMESTAMP").toLocalDateTime().toLocalDate())
-                    .userId(resultSet.getInt("USER_ID"))
-                    .eventType(resultSet.getString("EVENT_TYPE"))
-                    .operation(resultSet.getString("OPERATION"))
-                    .entityId(resultSet.getInt("ENTITY_ID"))
-                    .build();
+            Feed feed = new Feed();
+            feed.setEventId(resultSet.getInt("ID"));
+            feed.setTimestamp(resultSet.getTimestamp("DATE").toLocalDateTime().toLocalDate());
+            feed.setUserId(resultSet.getInt("USER_ID"));
+            feed.setEventType(resultSet.getString("EVENT_TYPE"));
+            feed.setOperation(resultSet.getString("OPERATION"));
+            feed.setEntityId(resultSet.getInt("ENTITY_ID"));
+            return feed;
         }
     }
 }

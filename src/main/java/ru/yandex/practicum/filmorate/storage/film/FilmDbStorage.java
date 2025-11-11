@@ -258,13 +258,10 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Component
-    //@RequiredArgsConstructor
+    @RequiredArgsConstructor
     private static class FilmRowMapper implements RowMapper<Film> {
-        private MpaService mpaService;
-        private GenreService genreService;
-
-        public FilmRowMapper() {
-        }
+        private final MpaService mpaService;
+        private final GenreService genreService;
 
         @Override
         public Film mapRow(ResultSet resultSet, int rowNum) throws SQLException {

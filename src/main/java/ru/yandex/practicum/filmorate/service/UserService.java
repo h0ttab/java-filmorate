@@ -45,8 +45,8 @@ public class UserService {
         return userStorage.getFriends(userId);
     }
 
-    public Collection<Feed> getFeeds() {
-        return feedService.findAll();
+    public Collection<Feed> getFeeds(Integer userId) {
+        return feedService.findAll(userId);
     }
 
     public User findById(Integer userId) {
