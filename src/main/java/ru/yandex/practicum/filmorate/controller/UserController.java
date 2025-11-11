@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserUpdateDto;
@@ -61,5 +63,10 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         userService.delete(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public Collection<Feed> getCommonFriends(@PathVariable Integer id) {
+        return userService.getFeeds();
     }
 }
