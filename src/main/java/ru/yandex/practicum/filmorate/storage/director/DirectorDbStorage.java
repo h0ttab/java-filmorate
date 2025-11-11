@@ -43,7 +43,8 @@ public class DirectorDbStorage implements DirectorStorage {
     @Override
     public List<Director> findAll() {
         String query = """
-                SELECT * FROM director;
+                SELECT * FROM director
+                ORDER BY id;
                 """;
         return jdbcTemplate.query(query, mapper);
     }
