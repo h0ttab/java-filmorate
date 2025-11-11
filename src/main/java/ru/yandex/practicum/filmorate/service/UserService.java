@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserUpdateDto;
@@ -18,16 +19,19 @@ import ru.yandex.practicum.filmorate.util.Validators;
 @Service
 public class UserService {
     private final UserStorage userStorage;
+    private final FeedService feedService;
     private final Validators validators;
     private final UserMapper mapper;
     private final DtoHelper dtoHelper;
 
     @Autowired
     public UserService(@Qualifier("userDbStorage") UserStorage userStorage,
+                       FeedService feedService,
                        UserMapper mapper,
                        DtoHelper dtoHelper,
                        Validators validators) {
         this.userStorage = userStorage;
+        this.feedService = feedService;
         this.mapper = mapper;
         this.dtoHelper = dtoHelper;
         this.validators = validators;
@@ -39,6 +43,10 @@ public class UserService {
 
     public Collection<User> getFriends(Integer userId) {
         return userStorage.getFriends(userId);
+    }
+
+    public Collection<Feed> getFeeds() {
+        return feedService.findAll();
     }
 
     public User findById(Integer userId) {

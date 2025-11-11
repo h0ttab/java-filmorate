@@ -29,6 +29,7 @@ public class FilmDbStorage implements FilmStorage {
     private final MpaService mpaService;
     private final GenreService genreService;
     private final LikeService likeService;
+    private final FilmRowMapper mapper = new FilmRowMapper();
     private final DirectorService directorService;
 
     private Film addAllAttributesToFilm(Film film) {
@@ -257,10 +258,13 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Component
-    @RequiredArgsConstructor
+    //@RequiredArgsConstructor
     private static class FilmRowMapper implements RowMapper<Film> {
-        private final MpaService mpaService;
-        private final GenreService genreService;
+        private MpaService mpaService;
+        private GenreService genreService;
+
+        public FilmRowMapper() {
+        }
 
         @Override
         public Film mapRow(ResultSet resultSet, int rowNum) throws SQLException {
