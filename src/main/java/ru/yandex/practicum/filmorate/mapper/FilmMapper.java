@@ -63,8 +63,8 @@ public class FilmMapper {
             filmBuilder.releaseDate(filmUpdateDto.getReleaseDate());
         }
 
-        if (Optional.ofNullable(filmUpdateDto.getDirectors()).isPresent()) {
-            filmBuilder.directors(filmUpdateDto.getDirectors().stream()
+        if (filmUpdateDto.getDirectors().isPresent()) {
+            filmBuilder.directors(filmUpdateDto.getDirectors().get().stream()
                     .map(dto -> directorService.findById(dto.getId())).toList()
             );
         } else {

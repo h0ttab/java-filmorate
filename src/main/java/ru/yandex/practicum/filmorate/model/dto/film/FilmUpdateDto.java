@@ -34,5 +34,5 @@ public class FilmUpdateDto {
     @Positive
     private Optional<ObjectIdDto> mpa;
 
-    private List<ObjectIdDto> directors;
+    private Optional<List<ObjectIdDto>> directors;
 }
