@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.util.HashSet;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -45,13 +44,12 @@ public class DirectorService {
     }
 
     public void linkDirectorToFilm(Integer filmId, List<Integer> directorIds, boolean clearExisting) {
-        directorStorage.linkDirectorsToFilm(filmId, new HashSet<>(directorIds), clearExisting);
+        directorStorage.linkDirectorsToFilm(filmId, directorIds, clearExisting);
     }
 
     public Director update(Director director) {
         Director updatedDirector = directorStorage.update(director);
-        log.info("Обновлена информация о режиссёре id={}. Новое значение: {}",
-                updatedDirector.getId(), updatedDirector);
+        log.info("Обновлена информация о режиссёре id={}. Новое значение: {}", updatedDirector.getId(), updatedDirector);
         return updatedDirector;
     }
 

@@ -5,12 +5,12 @@ import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.AbstractStorage;
+import ru.yandex.practicum.filmorate.storage.AbstractInMemoryStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
 
 @Component
 @RequiredArgsConstructor
-public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmStorage {
+public class InMemoryFilmStorage extends AbstractInMemoryStorage<Film> implements FilmStorage {
     private final Validators validators;
 
     public Map<Integer, Film> getStorage() {

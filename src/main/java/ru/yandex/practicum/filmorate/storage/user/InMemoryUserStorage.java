@@ -8,12 +8,12 @@ import ru.yandex.practicum.filmorate.exception.ExceptionType;
 import ru.yandex.practicum.filmorate.exception.LoggedException;
 import ru.yandex.practicum.filmorate.model.FriendStatus;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.AbstractStorage;
+import ru.yandex.practicum.filmorate.storage.AbstractInMemoryStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
 
 @Component
 @RequiredArgsConstructor
-public class InMemoryUserStorage extends AbstractStorage<User> implements UserStorage {
+public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implements UserStorage {
     private final Validators validators;
 
     public Map<Integer, User> getStorage() {

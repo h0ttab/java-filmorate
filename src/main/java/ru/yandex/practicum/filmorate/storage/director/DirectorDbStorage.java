@@ -1,7 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.director;
 
 import java.sql.*;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -63,7 +64,10 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public List<Director> findByIdList(List<Integer> directorIdList) {
-        String query = "SELECT * FROM director WHERE id IN (:ids)";
+        String query = """
+                SELECT * FROM director
+                WHERE id IN (:ids);
+                """;
         SqlParameterSource parameters = new MapSqlParameterSource("ids", directorIdList);
         return namedParameterJdbcTemplate.query(query, parameters, mapper);
     }
@@ -96,11 +100,14 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public void linkDirectorsToFilm(Integer filmId, Set<Integer> directorIds, boolean clearExisting) {
+    public void linkDirectorsToFilm(Integer filmId, List<Integer> directorIds, boolean clearExisting) {
         StringBuilder insertQuery = new StringBuilder();
 
         if (clearExisting) {
-            String deleteDirectorsOfFilmQuery = "DELETE FROM film_director WHERE film_id = ?;";
+            String deleteDirectorsOfFilmQuery = """
+                    DELETE FROM film_director
+                    WHERE film_id = ?;
+                    """;
             jdbcTemplate.update(deleteDirectorsOfFilmQuery, filmId);
         }
 

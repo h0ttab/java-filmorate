@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -86,7 +85,7 @@ public class DirectorStorageTest {
                 .hasFieldOrPropertyWithValue("id", 2)
                 .hasFieldOrPropertyWithValue("name", "Квентин Тарантино");
 
-        storage.linkDirectorsToFilm(1, Set.of(5), false);
+        storage.linkDirectorsToFilm(1, List.of(5), false);
 
         List<Director> directorsAfterUpdate = storage.findByFilm(1);
 

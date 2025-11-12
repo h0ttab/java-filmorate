@@ -36,6 +36,10 @@ public class FilmService {
         return filmStorage.findById(filmId);
     }
 
+    public List<Film> findTopLiked(int count) {
+        return filmStorage.findTopLiked(count);
+    }
+
     public List<Film> findByDirector(Integer directorId, String sortOrder) {
         try {
             SortOrder order = SortOrder.valueOf(sortOrder.toUpperCase());
@@ -83,7 +87,4 @@ public class FilmService {
         filmStorage.delete(filmId);
     }
 
-    public List<Film> findTopLiked(int count) {
-        return filmStorage.findTopLiked(count);
-    }
 }
