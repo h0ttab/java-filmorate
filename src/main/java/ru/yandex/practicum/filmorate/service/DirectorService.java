@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.model.dto.film.DirectorDto;
 import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
 
@@ -18,7 +19,8 @@ public class DirectorService {
     private final DirectorStorage directorStorage;
     private final Validators validators;
 
-    public Director create(Director director) {
+    public Director create(DirectorDto directorDto) {
+        Director director = Director.builder().name(directorDto.getName()).build();
         Director createdDirector = directorStorage.create(director);
         log.info("Добавлен режиссёр {}", createdDirector);
         return createdDirector;

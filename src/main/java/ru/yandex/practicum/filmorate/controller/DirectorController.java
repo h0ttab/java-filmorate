@@ -26,7 +26,7 @@ public class DirectorController {
 
     @PostMapping
     public Director create(@RequestBody DirectorDto directorDto) {
-        return directorService.create(Director.builder().name(directorDto.getName()).build());
+        return directorService.create(directorDto);
     }
 
     @PutMapping
