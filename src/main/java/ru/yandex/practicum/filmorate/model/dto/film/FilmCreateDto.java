@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.model.dto.film;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -13,7 +12,6 @@ import ru.yandex.practicum.filmorate.model.dto.ObjectIdDto;
 @Data
 @Builder
 public class FilmCreateDto {
-    @NotNull
     @NotBlank
     private String name;
 
@@ -28,9 +26,10 @@ public class FilmCreateDto {
     @Positive
     private Integer duration;
 
-    private Optional<List<ObjectIdDto>> genres;
+    private List<ObjectIdDto> genres;
 
-    private Optional<ObjectIdDto> mpa;
+    @NotNull
+    private ObjectIdDto mpa;
 
-    private Optional<List<ObjectIdDto>> directors;
+    private List<ObjectIdDto> directors;
 }

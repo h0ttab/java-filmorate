@@ -44,11 +44,12 @@ public class Validators {
         }
     }
 
-    private boolean isValidFilmDescription(Optional<String> description) {
-        return description.isPresent() && description.get().length() < Validators.MAX_FILM_DESCRIPTION_LENGTH;
+    private boolean isValidFilmDescription(String description) {
+        Optional<String> desc = Optional.ofNullable(description);
+        return desc.isPresent() && desc.get().length() < Validators.MAX_FILM_DESCRIPTION_LENGTH;
     }
 
-    public void validateFilmDescription(Optional<String> description, Integer filmId, Class<?> clazz) {
+    public void validateFilmDescription(String description, Integer filmId, Class<?> clazz) {
         if (!isValidFilmDescription(description)) {
             LoggedException.throwNew(ExceptionType.INVALID_FILM_DESCRIPTION, clazz, List.of(filmId));
         }

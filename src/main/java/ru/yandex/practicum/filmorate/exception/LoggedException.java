@@ -72,6 +72,9 @@ public class LoggedException {
             case UNEXPECTED_ERROR -> {
                 exception = new RuntimeException("Произошла непредвиденная ошибка при обработке запроса.");
             }
+            case REQUIRED_FIELD_MISSING -> {
+                exception = new ValidationException("В теле запроса отсутствует одно или несколько обязательных полей.");
+            }
             default -> exception = new RuntimeException("Произошла непредвиденная ошибка при обработке запроса.");
         }
         log.error(exception.getMessage(), exception);

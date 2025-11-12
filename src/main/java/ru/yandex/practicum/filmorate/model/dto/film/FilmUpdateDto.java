@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.model.dto.film;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -17,22 +17,19 @@ public class FilmUpdateDto {
     @Positive
     private Integer id;
 
-    @NotBlank
-    private Optional<String> name;
+    private String name;
 
     @Length(max = 200)
-    private Optional<String> description;
+    private String description;
 
     private LocalDate releaseDate;
 
     @Positive
-    private Optional<Integer> duration;
+    private Integer duration;
 
-    @NotEmpty
-    private Optional<List<ObjectIdDto>> genres;
+    private List<ObjectIdDto> genres;
 
-    @Positive
-    private Optional<ObjectIdDto> mpa;
+    private ObjectIdDto mpa;
 
-    private Optional<List<ObjectIdDto>> directors;
+    private List<ObjectIdDto> directors;
 }
