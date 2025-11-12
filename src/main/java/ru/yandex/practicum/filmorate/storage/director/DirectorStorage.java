@@ -12,6 +12,8 @@ public interface DirectorStorage {
 
     List<Director> findByFilm(Integer filmId);
 
+    List<Director> findByIdList(List<Integer> idList);
+
     Director findById(Integer directorId);
 
     Director update(Director director);

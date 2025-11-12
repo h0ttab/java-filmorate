@@ -40,6 +40,10 @@ public class DirectorService {
         return directorStorage.findByFilm(filmId);
     }
 
+    public List<Director> findByIdList(List<Integer> directorIdList) {
+        return directorStorage.findByIdList(directorIdList);
+    }
+
     public void linkDirectorToFilm(Integer filmId, List<Integer> directorIds, boolean clearExisting) {
         directorStorage.linkDirectorsToFilm(filmId, new HashSet<>(directorIds), clearExisting);
     }

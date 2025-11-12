@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ExceptionType;
@@ -18,6 +19,7 @@ import ru.yandex.practicum.filmorate.model.Director;
 @RequiredArgsConstructor
 public class DirectorDbStorage implements DirectorStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final DirectorRowMapper mapper;
 
     @Override
@@ -57,6 +59,13 @@ public class DirectorDbStorage implements DirectorStorage {
                 WHERE fd.film_id = ?;
                 """;
         return jdbcTemplate.query(query, mapper, filmId);
+    }
+
+    @Override
+    public List<Director> findByIdList(List<Integer> directorIdList) {
+        String query = "SELECT * FROM director WHERE id IN (:ids)";
+        SqlParameterSource parameters = new MapSqlParameterSource("ids", directorIdList);
+        return namedParameterJdbcTemplate.query(query, parameters, mapper);
     }
 
     @Override

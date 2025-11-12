@@ -37,7 +37,7 @@ public class FilmDbStorage implements FilmStorage {
         Integer mpaId = film.getMpa().getId();
 
         Mpa mpa = mpaService.findById(mpaId);
-        List<Genre> genre = genreService.findGenreByFilmId(filmId);
+        List<Genre> genre = genreService.findByFilmId(filmId);
         List<Integer> likes = likeService.getLikesByFilmId(filmId);
         List<Director> directors = directorService.findByFilm(filmId);
         film.setMpa(mpa);
@@ -209,7 +209,7 @@ public class FilmDbStorage implements FilmStorage {
                     .releaseDate(resultSet.getDate("RELEASE_DATE").toLocalDate())
                     .duration(resultSet.getInt("DURATION"))
                     .mpa(mpaService.findById(resultSet.getInt("MPA_ID")))
-                    .genres(genreService.findGenreByFilmId(resultSet.getInt("ID")))
+                    .genres(genreService.findByFilmId(resultSet.getInt("ID")))
                     .build();
         }
     }
