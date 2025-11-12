@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import java.time.Instant;
 import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserUpdateDto;
@@ -45,8 +48,12 @@ public class UserService {
         return userStorage.getFriends(userId);
     }
 
-    public Collection<Feed> getFeeds(Integer userId) {
-        return feedService.findAll(userId);
+    public Collection<Feed> getFeedsByUser(Integer userId) {
+        return feedService.findById(userId);
+    }
+
+    public Collection<Feed> getAllFeeds() {
+        return feedService.findAll();
     }
 
     public User findById(Integer userId) {
@@ -76,12 +83,23 @@ public class UserService {
         findById(userIdB);
         validators.validateFriendshipNotExists(userIdA, userIdB, getClass());
         userStorage.addFriend(userIdA, userIdB);
+        Feed feed = new Feed(Instant.now().toEpochMilli(),
+                userIdA,
+                Event.FRIEND.toString(),
+                Operation.ADD.toString(),
+                feedService.getFriendId(userIdA, userIdB));
+        feedService.save(feed);
     }
 
     public void removeFriend(Integer userIdA, Integer userIdB) {
         findById(userIdA);
         findById(userIdB);
+        Integer friendId = feedService.getFriendId(userIdA, userIdB);
         userStorage.removeFriend(userIdA, userIdB);
+        if (friendId != null) {
+            Feed feed = new Feed(Instant.now().toEpochMilli(), userIdA, Event.FRIEND.toString(), Operation.REMOVE.toString(), friendId);
+            feedService.save(feed);
+        }
     }
 
     public void delete(Integer userId) {

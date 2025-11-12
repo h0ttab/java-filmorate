@@ -39,6 +39,16 @@ public class UserController {
         userService.removeFriend(id, friendId);
     }
 
+    @GetMapping("/{userId}/feed")
+    public Collection<Feed> getFeedsByUser(@PathVariable Integer userId) {
+        return userService.getFeedsByUser(userId);
+    }
+
+    @GetMapping("//feed")
+    public Collection<Feed> getAllFeeds() {
+        return userService.getAllFeeds();
+    }
+
     @GetMapping("/{id}/friends")
     public Collection<User> getUserFriends(@PathVariable Integer id) {
         return userService.getFriends(id);
@@ -62,10 +72,5 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         userService.delete(id);
-    }
-
-    @GetMapping("/{id}/feed")
-    public Collection<Feed> getFeeds(@PathVariable Integer id) {
-        return userService.getFeeds(id);
     }
 }

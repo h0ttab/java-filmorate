@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -23,13 +23,18 @@ public class LikeService {
     public void addLike(Integer filmId, Integer userId) {
         validators.validateLikeNotExists(filmId, userId, getClass());
         likeStorage.addLike(filmId, userId);
-        Feed feed = new Feed(LocalDate.now(), userId, Event.LIKE.toString(), Operation.ADD.toString(), 111);
+        Feed feed = new Feed(Instant.now().toEpochMilli(), userId, Event.LIKE.toString(), Operation.ADD.toString(), feedService.getLikeId(filmId, userId));
         feedService.save(feed);
     }
 
     public void removeLike(Integer filmId, Integer userId) {
         validators.validateLikeExists(filmId, userId, getClass());
+        Integer likeId = feedService.getLikeId(filmId, userId);
         likeStorage.removeLike(filmId, userId);
+        if (likeId != null) {
+            Feed feed = new Feed(Instant.now().toEpochMilli(), userId, Event.LIKE.toString(), Operation.REMOVE.toString(), likeId);
+            feedService.save(feed);
+        }
     }
 
     public List<Integer> getLikesByFilmId(Integer filmId) {

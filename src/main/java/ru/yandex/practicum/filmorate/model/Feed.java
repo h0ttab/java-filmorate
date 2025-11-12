@@ -3,12 +3,10 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 public class Feed {
-    private LocalDate timestamp;
+    private Long timestamp;
     private Integer userId;
     private String eventType;
     private String operation;
@@ -18,7 +16,7 @@ public class Feed {
     public Feed() {
     }
 
-    public Feed(LocalDate timestamp, Integer userId, String eventType, String operation,
+    public Feed(Long timestamp, Integer userId, String eventType, String operation,
                 Integer entityId) {
         this.timestamp = timestamp;
         this.userId = userId;
@@ -27,7 +25,7 @@ public class Feed {
         this.entityId = entityId;
     }
 
-    public Feed(final Integer eventId, final LocalDate timestamp, final Integer userId, final String eventType,
+    public Feed(final Integer eventId, final Long timestamp, final Integer userId, final String eventType,
                 final String operation,
                 final Integer entityId) {
         this.eventId = eventId;
