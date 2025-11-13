@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Director;
@@ -25,12 +26,12 @@ public class DirectorController {
     }
 
     @PostMapping
-    public Director create(@RequestBody DirectorDto directorDto) {
+    public Director create(@Valid @RequestBody DirectorDto directorDto) {
         return directorService.create(directorDto);
     }
 
     @PutMapping
-    public Director update(@RequestBody Director director) {
+    public Director update(@Valid @RequestBody Director director) {
         return directorService.update(director);
     }
 

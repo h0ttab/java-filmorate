@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody UserUpdateDto userUpdateDto) {
+    public User update(@Valid @RequestBody UserUpdateDto userUpdateDto) {
         return userService.update(userUpdateDto);
     }
 
