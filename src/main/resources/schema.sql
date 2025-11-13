@@ -90,3 +90,5 @@ CREATE TABLE IF NOT EXISTS review_feedback (
 
 CREATE INDEX IF NOT EXISTS idx_review_film_id ON review(film_id);
 CREATE INDEX IF NOT EXISTS idx_review_useful_desc ON review(useful DESC);
+CREATE INDEX IF NOT EXISTS idx_film_desc ON film(description);
+CREATE INDEX IF NOT EXISTS idx_director_name ON director(name);
