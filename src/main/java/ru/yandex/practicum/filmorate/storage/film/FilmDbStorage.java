@@ -29,7 +29,6 @@ public class FilmDbStorage implements FilmStorage {
     private final MpaService mpaService;
     private final GenreService genreService;
     private final LikeService likeService;
-    private final FilmRowMapper mapper = new FilmRowMapper();
     private final DirectorService directorService;
 
     private Film addAllAttributesToFilm(Film film) {
