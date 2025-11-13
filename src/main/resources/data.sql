@@ -76,11 +76,13 @@ INSERT INTO film_genre (film_id, genre_id) VALUES
 (3, 3), -- Шрек (ID=3) -> Мультфильм (ID=3)
 (3, 1); -- Шрек (ID=3) -> Комедия (ID=1)
 
+
 INSERT INTO film_director (film_id, director_id) VALUES
 (2, 1), -- Форрест Гамп (ID=2) -> Роберт Земекис (ID=1)
 (1, 2), -- Криминальное чтиво (ID=1) -> Квентин Тарантино (ID=2)
 (3, 3), -- Шрек (ID=3) -> Эндрю Адамсон (ID=3)
 (3, 4); -- Шрек (ID=3) -> Вики Дженсон (ID=4)
+
 
 INSERT INTO "like" (user_id, film_id) VALUES
 (1, 1), -- Иван (ID=1) лайкнул "Криминальное чтиво" (ID=1)
