@@ -23,13 +23,13 @@ public class FeedDbStorage implements FeedStorage {
 
     @Override
     public List<Feed> findAll() {
-        String query = "SELECT * FROM feed ORDER BY user_id, date DESC;";
+        String query = "SELECT * FROM feed";
         return jdbcTemplate.query(query, mapper);
     }
 
     @Override
     public List<Feed> findById(Integer id) {
-        String query = "SELECT * FROM feed WHERE user_id = ? ORDER BY date DESC;";
+        String query = "SELECT * FROM feed WHERE user_id = ?";
         return jdbcTemplate.query(query, mapper, id);
     }
 

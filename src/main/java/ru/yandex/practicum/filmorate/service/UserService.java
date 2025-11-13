@@ -87,7 +87,7 @@ public class UserService {
                 userIdA,
                 Event.FRIEND.toString(),
                 Operation.ADD.toString(),
-                feedService.getFriendId(userIdA, userIdB));
+                userIdB);
         feedService.save(feed);
     }
 
@@ -97,7 +97,11 @@ public class UserService {
         Integer friendId = feedService.getFriendId(userIdA, userIdB);
         userStorage.removeFriend(userIdA, userIdB);
         if (friendId != null) {
-            Feed feed = new Feed(Instant.now().toEpochMilli(), userIdA, Event.FRIEND.toString(), Operation.REMOVE.toString(), friendId);
+            Feed feed = new Feed(Instant.now().toEpochMilli(),
+                    userIdA,
+                    Event.FRIEND.toString(),
+                    Operation.REMOVE.toString(),
+                    userIdB);
             feedService.save(feed);
         }
     }
