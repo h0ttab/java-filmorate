@@ -59,6 +59,28 @@ public class InMemoryFilmStorage extends AbstractInMemoryStorage<Film> implement
     }
 
     @Override
+    public List<Film> findTopLiked(int count, Integer genreId, Integer year) {
+        return mapEntityStorage.values().stream()
+                .filter(film -> {
+                    // Фильтрация по жанру, если указан genreId
+                    if (genreId != null && (film.getGenres() == null ||
+                            film.getGenres().stream().noneMatch(genre -> genre.getId().equals(genreId)))) {
+                        return false;
+                    }
+
+                    // Фильтрация по году, если указан year
+                    if (year != null && film.getReleaseDate().getYear() != year) {
+                        return false;
+                    }
+
+                    return true;
+                })
+                .sorted(Comparator.<Film, Integer>comparing(film -> film.getLikes().size()).reversed())
+                .limit(count)
+                .toList();
+    }
+
+    @Override
     public List<Film> findByDirector(Integer directorId, SortOrder order) {
         return List.of();
     }
