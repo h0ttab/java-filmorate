@@ -17,12 +17,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FeedServiceTest {
     @Autowired
     private FeedService feedService;
-    private final String LIKE = Event.LIKE.toString();
-    private final String REVIEW = Event.REVIEW.toString();
-    private final String FRIEND = Event.FRIEND.toString();
-    private final String REMOVE = Operation.REMOVE.toString();
-    private final String UPDATE = Operation.UPDATE.toString();
-    private final String ADD = Operation.ADD.toString();
+    private static final String LIKE = Event.LIKE.toString();
+    private static final String REVIEW = Event.REVIEW.toString();
+    private static final String FRIEND = Event.FRIEND.toString();
+    private static final String REMOVE = Operation.REMOVE.toString();
+    private static final String UPDATE = Operation.UPDATE.toString();
+    private static final String ADD = Operation.ADD.toString();
 
     @Test
     public void testFindById() {
