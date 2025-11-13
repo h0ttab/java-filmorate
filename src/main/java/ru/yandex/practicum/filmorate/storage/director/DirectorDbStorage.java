@@ -101,8 +101,6 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public void linkDirectorsToFilm(Integer filmId, List<Integer> directorIds, boolean clearExisting) {
-        StringBuilder insertQuery = new StringBuilder();
-
         if (clearExisting) {
             String deleteDirectorsOfFilmQuery = """
                     DELETE FROM film_director
@@ -111,13 +109,20 @@ public class DirectorDbStorage implements DirectorStorage {
             jdbcTemplate.update(deleteDirectorsOfFilmQuery, filmId);
         }
 
-        for (Integer directorId : directorIds) {
-            insertQuery.append(String.format("INSERT INTO film_director (film_id, director_id) VALUES (%d, %d);",
-                    filmId, directorId));
-            insertQuery.append("\n");
+        if (directorIds == null || directorIds.isEmpty()) {
+            return;
         }
 
-        jdbcTemplate.update(insertQuery.toString());
+        String insertQuery = """
+                INSERT INTO film_director(film_id, director_id)
+                VALUES (?, ?)
+                """;
+
+        jdbcTemplate.batchUpdate(insertQuery, directorIds, directorIds.size(),
+                (ps, directorId) -> {
+                    ps.setInt(1, filmId);
+                    ps.setInt(2, directorId);
+                });
     }
 
     @Override

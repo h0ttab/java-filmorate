@@ -4,8 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ExceptionType;
 import ru.yandex.practicum.filmorate.exception.LoggedException;
@@ -18,10 +17,10 @@ import ru.yandex.practicum.filmorate.storage.film.SortOrder;
 import ru.yandex.practicum.filmorate.util.DtoHelper;
 import ru.yandex.practicum.filmorate.util.Validators;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FilmService {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final FilmStorage filmStorage;
     private final FilmMapper filmMapper;
     private final LikeService likeService;

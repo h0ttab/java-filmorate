@@ -3,18 +3,17 @@ package ru.yandex.practicum.filmorate.service;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.dto.film.DirectorDto;
 import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DirectorService {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final DirectorStorage directorStorage;
     private final Validators validators;
 

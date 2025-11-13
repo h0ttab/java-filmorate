@@ -6,8 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,11 +19,11 @@ import ru.yandex.practicum.filmorate.exception.LoggedException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.service.*;
 
+@Slf4j
 @Primary
 @Component
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmDbStorage implements FilmStorage {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final JdbcTemplate jdbcTemplate;
     private final FilmRowMapper mapper;
     private final MpaService mpaService;
