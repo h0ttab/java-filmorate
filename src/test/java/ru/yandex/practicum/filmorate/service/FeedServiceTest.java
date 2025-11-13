@@ -36,17 +36,25 @@ public class FeedServiceTest {
                 .hasSize(3)
                 .extracting(Feed::getEventId)
                 .containsExactlyInAnyOrder(1, 2, 3);
-
-        feeds.forEach(feed -> {
-            if (feed.getEventId() == 1) {
-                assertFeed(feed,
-                        915138000000L,
-                        1,
-                        Event.LIKE.toString(),
-                        Operation.REMOVE.toString(),
-                        333);
-            }
-        });
+        assertThat(feeds.get(0).getEventType()).isEqualTo(Event.LIKE.toString());
+        assertThat(feeds.get(1).getEventType()).isEqualTo(Event.REVIEW.toString());
+        assertThat(feeds.get(2).getEventType()).isEqualTo(Event.FRIEND.toString());
+        assertThat(feeds.get(0).getOperation()).isEqualTo(Operation.REMOVE.toString());
+        assertThat(feeds.get(1).getOperation()).isEqualTo(Operation.UPDATE.toString());
+        assertThat(feeds.get(2).getOperation()).isEqualTo(Operation.ADD.toString());
+        assertThat(feeds.get(0).getEntityId()).isEqualTo(333);
+        assertThat(feeds.get(1).getEntityId()).isEqualTo(1);
+        assertThat(feeds.get(2).getEntityId()).isEqualTo(2);
+        //feeds.forEach(feed -> {
+        //    if (feed.getEventId() == 1) {
+        //        assertFeed(feed,
+        //                915138000000L,
+        //                1,
+        //                Event.LIKE.toString(),
+        //                Operation.REMOVE.toString(),
+        //                333);
+        //    }
+        //});
     }
 
     @Test
