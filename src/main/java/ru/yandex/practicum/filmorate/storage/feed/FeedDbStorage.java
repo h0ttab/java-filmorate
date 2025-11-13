@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.feed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -31,30 +30,6 @@ public class FeedDbStorage implements FeedStorage {
     public List<Feed> findById(Integer id) {
         String query = "SELECT * FROM feed WHERE user_id = ?";
         return jdbcTemplate.query(query, mapper, id);
-    }
-
-    @Override
-    public Integer getLikeId(Integer filmId, Integer userId) {
-        String query = """
-                SELECT id FROM "like" WHERE film_id = ? AND user_id = ?;
-                """;
-        try {
-            return jdbcTemplate.queryForObject(query, Integer.class, filmId, userId);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public Integer getFriendId(Integer userIdA, Integer userIdB) {
-        String query = """
-                SELECT id FROM friends WHERE request_from_id = ? AND request_to_id = ?
-                """;
-        try {
-            return jdbcTemplate.queryForObject(query, Integer.class, userIdA, userIdB);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
     }
 
     @Override
