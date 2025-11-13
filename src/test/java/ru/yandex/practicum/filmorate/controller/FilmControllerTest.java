@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import ru.yandex.practicum.filmorate.config.ControllerTest;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.model.*;
 
 @ControllerTest
 public class FilmControllerTest {
@@ -89,13 +89,15 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldNotFailOnValidInput_createUserTest_validRequest() {
+    void shouldNotFailOnValidInput_createFilmTest_validRequest() {
         Film film = Film.builder()
                 .name("Title")
                 .description("About")
                 .releaseDate(LocalDate.of(2010, 1, 1))
                 .duration(100)
-                .mpa(Mpa.builder().id(2).build())
+                .mpa(Mpa.builder().id(2).name("PG").build())
+                .genres(List.of(Genre.builder().id(1).name("Комедия").build()))
+                .directors(List.of())
                 .build();
 
         webTestClient.post()

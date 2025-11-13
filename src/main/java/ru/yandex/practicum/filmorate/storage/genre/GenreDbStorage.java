@@ -8,6 +8,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -15,12 +16,14 @@ import ru.yandex.practicum.filmorate.model.Genre;
 @RequiredArgsConstructor
 public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final RowMapper<Genre> mapper = new GenreRowMapper();
 
     @Override
     public List<Genre> findAll() {
         String query = """
-                SELECT * FROM genre;
+                SELECT * FROM genre
+                ORDER BY id;
                 """;
         return jdbcTemplate.query(query, mapper);
     }
@@ -46,6 +49,15 @@ public class GenreDbStorage implements GenreStorage {
         return jdbcTemplate.query(query, mapper, filmId);
     }
 
+    @Override
+    public List<Genre> findByIdList(List<Integer> genreIdList) {
+        SqlParameterSource parameters = new MapSqlParameterSource("ids", genreIdList);
+        String query = """
+                SELECT * FROM genre
+                WHERE id IN (:ids)
+                """;
+        return namedParameterJdbcTemplate.query(query, parameters, mapper);
+    }
 
     @Override
     public void linkGenresToFilm(Integer filmId, Set<Integer> genreIdSet, boolean clearExisting) {

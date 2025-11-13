@@ -16,7 +16,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 @RequestMapping("/films")
 @RequiredArgsConstructor
 public class FilmController {
-
     private final FilmService filmService;
 
     @GetMapping
@@ -27,6 +26,11 @@ public class FilmController {
     @GetMapping("/{id}")
     public Film findById(@PathVariable Integer id) {
         return filmService.findById(id);
+    }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> findByDirector(@PathVariable Integer directorId, @RequestParam String sortBy) {
+        return filmService.findByDirector(directorId, sortBy);
     }
 
     @PutMapping("/{filmId}/like/{userId}")
@@ -50,7 +54,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody FilmUpdateDto filmUpdateDto) {
+    public Film update(@Valid @RequestBody FilmUpdateDto filmUpdateDto) {
         return filmService.update(filmUpdateDto);
     }
 

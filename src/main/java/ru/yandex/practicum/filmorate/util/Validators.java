@@ -44,11 +44,12 @@ public class Validators {
         }
     }
 
-    private boolean isValidFilmDescription(Optional<String> description) {
-        return description.isPresent() && description.get().length() < Validators.MAX_FILM_DESCRIPTION_LENGTH;
+    private boolean isValidFilmDescription(String description) {
+        Optional<String> desc = Optional.ofNullable(description);
+        return desc.isPresent() && desc.get().length() < Validators.MAX_FILM_DESCRIPTION_LENGTH;
     }
 
-    public void validateFilmDescription(Optional<String> description, Integer filmId, Class<?> clazz) {
+    public void validateFilmDescription(String description, Integer filmId, Class<?> clazz) {
         if (!isValidFilmDescription(description)) {
             LoggedException.throwNew(ExceptionType.INVALID_FILM_DESCRIPTION, clazz, List.of(filmId));
         }
@@ -125,6 +126,23 @@ public class Validators {
     public void validateGenreExists(Integer genreId, Class<?> clazz) {
         if (!isValidGenre(genreId)) {
             LoggedException.throwNew(ExceptionType.GENRE_NOT_FOUND, clazz, List.of(genreId));
+        }
+    }
+
+    private boolean isValidDirector(Integer directorId) {
+        String query = """
+                    SELECT
+                    CASE
+                    	WHEN ? IN (SELECT id FROM director) THEN TRUE
+                    	ELSE FALSE
+                    END;
+                """;
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(query, Boolean.class, directorId));
+    }
+
+    public void validateDirectorExists(Integer directorId, Class<?> clazz) {
+        if (!isValidDirector(directorId)) {
+            LoggedException.throwNew(ExceptionType.DIRECTOR_NOT_FOUND, clazz, List.of(directorId));
         }
     }
 

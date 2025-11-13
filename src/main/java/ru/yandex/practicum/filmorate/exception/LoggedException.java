@@ -34,6 +34,9 @@ public class LoggedException {
             case GENRE_NOT_FOUND -> {
                 exception = new NotFoundException(String.format("Жанр id=%d не найден.", id.getFirst()));
             }
+            case DIRECTOR_NOT_FOUND -> {
+                exception = new NotFoundException(String.format("Режиссёр id=%d не найден", id.getFirst()));
+            }
             case INVALID_FRIENDSHIP_ADD -> {
                 exception = new NotFoundException(String.format("Не удалось добавить друга с id=%d пользователю id=%d."
                         + "Убедитесь, что id пользователей указаны верно.", id.get(0), id.get(1)));
@@ -76,8 +79,14 @@ public class LoggedException {
                         id.getFirst(), Validators.MAX_FILM_DESCRIPTION_LENGTH)
                 );
             }
+            case INVALID_SORT_ORDER -> {
+                exception = new ValidationException("Некорректный параметр \"sortBy\"");
+            }
             case UNEXPECTED_ERROR -> {
                 exception = new RuntimeException("Произошла непредвиденная ошибка при обработке запроса.");
+            }
+            case REQUIRED_FIELD_MISSING -> {
+                exception = new ValidationException("В теле запроса отсутствует одно или несколько обязательных полей.");
             }
             default -> exception = new RuntimeException("Произошла непредвиденная ошибка при обработке запроса.");
         }

@@ -24,6 +24,12 @@ ALTER TABLE "user" ALTER COLUMN id RESTART WITH 1;
 DELETE FROM film;
 ALTER TABLE film ALTER COLUMN id RESTART WITH 1;
 
+DELETE FROM film_director;
+ALTER TABLE film_director ALTER COLUMN id RESTART WITH 1;
+
+DELETE FROM director;
+ALTER TABLE director ALTER COLUMN id RESTART WITH 1;
+
 INSERT INTO mpa (name) VALUES
 ('G'),
 ('PG'),
@@ -38,6 +44,13 @@ INSERT INTO genre (name) VALUES
 ('Триллер'),
 ('Документальный'),
 ('Боевик');
+
+INSERT INTO director (name) VALUES
+('Роберт Земекис'),
+('Квентин Тарантино'),
+('Эндрю Адамсон'),
+('Вики Дженсон'),
+('Томми Ли Уоллес');
 
 INSERT INTO "user" (email, login, name, birthday) VALUES
 ('ivan.petrov@example.com', 'ivan_p', 'Иван Петров', '1990-05-15'),
@@ -55,6 +68,14 @@ INSERT INTO film_genre (film_id, genre_id) VALUES
 (2, 2), -- Форрест Гамп (ID=2) -> Драма (ID=2)
 (3, 3), -- Шрек (ID=3) -> Мультфильм (ID=3)
 (3, 1); -- Шрек (ID=3) -> Комедия (ID=1)
+
+
+INSERT INTO film_director (film_id, director_id) VALUES
+(2, 1), -- Форрест Гамп (ID=2) -> Роберт Земекис (ID=1)
+(1, 2), -- Криминальное чтиво (ID=1) -> Квентин Тарантино (ID=2)
+(3, 3), -- Шрек (ID=3) -> Эндрю Адамсон (ID=3)
+(3, 4); -- Шрек (ID=3) -> Вики Дженсон (ID=4)
+
 
 INSERT INTO "like" (user_id, film_id) VALUES
 (1, 1), -- Иван (ID=1) лайкнул "Криминальное чтиво" (ID=1)

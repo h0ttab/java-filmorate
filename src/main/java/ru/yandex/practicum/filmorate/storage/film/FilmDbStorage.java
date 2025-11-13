@@ -6,8 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,27 +19,30 @@ import ru.yandex.practicum.filmorate.exception.LoggedException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.service.*;
 
+@Slf4j
 @Primary
 @Component
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmDbStorage implements FilmStorage {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final JdbcTemplate jdbcTemplate;
     private final FilmRowMapper mapper;
     private final MpaService mpaService;
     private final GenreService genreService;
     private final LikeService likeService;
+    private final DirectorService directorService;
 
     private Film addAllAttributesToFilm(Film film) {
         Integer filmId = film.getId();
         Integer mpaId = film.getMpa().getId();
 
         Mpa mpa = mpaService.findById(mpaId);
-        List<Genre> genre = genreService.findGenreByFilmId(filmId);
+        List<Genre> genre = genreService.findByFilmId(filmId);
         List<Integer> likes = likeService.getLikesByFilmId(filmId);
+        List<Director> directors = directorService.findByFilm(filmId);
         film.setMpa(mpa);
         film.setGenres(genre);
         film.getLikes().addAll(likes);
+        film.setDirectors(directors);
         return film;
     }
 
@@ -89,8 +91,10 @@ public class FilmDbStorage implements FilmStorage {
 
         film.setId(keyHolder.getKey().intValue());
         log.info("Добавлен новый фильм: {}", film);
-
+        List<Integer> directors = film.getDirectors().stream().mapToInt(Director::getId).boxed().toList();
+        directorService.linkDirectorToFilm(film.getId(), directors, false);
         genreService.linkGenresToFilm(film.getId(), extractGenreIdSet(film), false);
+        addAllAttributesToFilm(film);
         return film;
     }
 
@@ -118,7 +122,10 @@ public class FilmDbStorage implements FilmStorage {
             LoggedException.throwNew(ExceptionType.FILM_NOT_FOUND, getClass(), List.of(film.getId()));
         }
         log.info("Обновлён фильм id {}. Новое значение: {}", film.getId(), film);
+        List<Integer> directors = film.getDirectors().stream().mapToInt(Director::getId).boxed().toList();
         genreService.linkGenresToFilm(film.getId(), extractGenreIdSet(film), true);
+        directorService.linkDirectorToFilm(film.getId(), directors, true);
+        addAllAttributesToFilm(film);
         return film;
     }
 
@@ -146,6 +153,39 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(query, mapper, size).stream().map(this::addAllAttributesToFilm).toList();
     }
 
+    @Override
+    public List<Film> findByDirector(Integer directorId, SortOrder order) {
+        String query = """
+                SELECT f.* from film f
+                JOIN film_director fd on f.id = fd.film_id
+                WHERE fd.director_id = ?;
+                """;
+
+        switch (order) {
+            case LIKES -> {
+                query = """
+                        SELECT f.* FROM film f
+                        JOIN film_director fd ON f.id = fd.film_id
+                        JOIN "like" l ON f.id = l.film_id
+                        WHERE fd.director_id = ?
+                        GROUP BY f.id
+                        ORDER BY count(DISTINCT l.user_id) DESC;
+                        """;
+            }
+            case YEAR -> {
+                query = """
+                        SELECT f.* FROM film f
+                        JOIN film_director fd ON f.id = fd.film_id
+                        WHERE fd.director_id = ?
+                        ORDER BY f.release_date ASC;
+                        """;
+            }
+        }
+        List<Film> films = jdbcTemplate.query(query, mapper, directorId);
+        films.forEach(this::addAllAttributesToFilm);
+        return films;
+    }
+
     private Set<Integer> extractGenreIdSet(Film film) {
         return film.getGenres().stream()
                 .mapToInt(Genre::getId)
@@ -168,7 +208,7 @@ public class FilmDbStorage implements FilmStorage {
                     .releaseDate(resultSet.getDate("RELEASE_DATE").toLocalDate())
                     .duration(resultSet.getInt("DURATION"))
                     .mpa(mpaService.findById(resultSet.getInt("MPA_ID")))
-                    .genres(genreService.findGenreByFilmId(resultSet.getInt("ID")))
+                    .genres(genreService.findByFilmId(resultSet.getInt("ID")))
                     .build();
         }
     }

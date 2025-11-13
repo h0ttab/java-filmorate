@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import java.util.*;
 import java.time.LocalDate;
+import java.util.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.service.*;
+import ru.yandex.practicum.filmorate.storage.director.DirectorDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
@@ -34,12 +35,14 @@ import static org.assertj.core.api.Assertions.assertThat;
         GenreDbStorage.class,
         FilmMapper.class,
         LikeDbStorage.class,
-        LikeService.class})
+        LikeService.class,
+        DirectorService.class,
+        DirectorDbStorage.class})
 public class FilmStorageTest {
     private final FilmDbStorage storage;
 
     private void assertFilm(Film film, Integer id, String name, String description, LocalDate releaseDate,
-                            Integer duration, Mpa mpa, Set<Integer> likes, List<Genre> genres) {
+                            Integer duration, Mpa mpa, Set<Integer> likes, List<Genre> genres, List<Director> directors) {
         assertThat(film)
                 .hasFieldOrPropertyWithValue("id", id)
                 .hasFieldOrPropertyWithValue("name", name)
@@ -48,7 +51,8 @@ public class FilmStorageTest {
                 .hasFieldOrPropertyWithValue("duration", duration)
                 .hasFieldOrPropertyWithValue("mpa", mpa)
                 .hasFieldOrPropertyWithValue("likes", likes)
-                .hasFieldOrPropertyWithValue("genres", genres);
+                .hasFieldOrPropertyWithValue("genres", genres)
+                .hasFieldOrPropertyWithValue("directors", directors);
     }
 
     @Test
@@ -57,9 +61,9 @@ public class FilmStorageTest {
 
         assertFilm(film, 3, "Шрек", "История про зеленого огра и его приключения.",
                 LocalDate.of(2001, 5, 18), 90, Mpa.builder().id(2).name("PG").build(),
-                Set.of(1, 2, 3), List.of(
-                        Genre.builder().id(1).name("Комедия").build(),
-                        Genre.builder().id(3).name("Мультфильм").build())
+                Set.of(1, 2, 3),
+                List.of(Genre.builder().id(1).name("Комедия").build(), Genre.builder().id(3).name("Мультфильм").build()),
+                List.of(Director.builder().id(3).name("Эндрю Адамсон").build(), Director.builder().id(4).name("Вики Дженсон").build())
         );
     }
 
@@ -76,9 +80,9 @@ public class FilmStorageTest {
             if (film.getId() == 3) {
                 assertFilm(film, 3, "Шрек", "История про зеленого огра и его приключения.",
                         LocalDate.of(2001, 5, 18), 90, Mpa.builder().id(2).name("PG").build(),
-                        Set.of(1, 2, 3), List.of(
-                                Genre.builder().id(1).name("Комедия").build(),
-                                Genre.builder().id(3).name("Мультфильм").build())
+                        Set.of(1, 2, 3),
+                        List.of(Genre.builder().id(1).name("Комедия").build(), Genre.builder().id(3).name("Мультфильм").build()),
+                        List.of(Director.builder().id(3).name("Эндрю Адамсон").build(), Director.builder().id(4).name("Вики Дженсон").build())
                 );
             }
         });
@@ -92,6 +96,7 @@ public class FilmStorageTest {
                 .releaseDate(LocalDate.of(1990, 11, 18)).duration(192)
                 .mpa(Mpa.builder().id(2).name("PG").build())
                 .genres(new ArrayList<>(List.of(Genre.builder().id(2).name("Драма").build())))
+                .directors(List.of(Director.builder().id(5).name("Томми Ли Уоллес").build()))
                 .build();
         Film createdFilm = storage.create(film);
         Film createdFilmFromDb = storage.findById(createdFilm.getId());

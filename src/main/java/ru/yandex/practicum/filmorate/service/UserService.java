@@ -2,8 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,9 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.util.DtoHelper;
 import ru.yandex.practicum.filmorate.util.Validators;
 
+@Slf4j
 @Service
 public class UserService {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final UserStorage userStorage;
     private final Validators validators;
     private final UserMapper mapper;
