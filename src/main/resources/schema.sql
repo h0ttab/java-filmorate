@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS review_feedback CASCADE;
+DROP TABLE IF EXISTS review CASCADE;
 DROP TABLE IF EXISTS friends CASCADE;
 DROP TABLE IF EXISTS "like" CASCADE;
 DROP TABLE IF EXISTS film_genre CASCADE;
@@ -69,3 +71,22 @@ CREATE TABLE IF NOT EXISTS friends (
     is_accepted BOOLEAN DEFAULT FALSE,
     UNIQUE (request_from_id, request_to_id)
 );
+
+CREATE TABLE IF NOT EXISTS review (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    is_positive BOOLEAN NOT NULL,
+    user_id INT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    film_id INT NOT NULL REFERENCES film(id) ON DELETE CASCADE,
+    useful INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS review_feedback (
+    review_id INT NOT NULL REFERENCES review(id) ON DELETE CASCADE,
+    user_id INT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    is_useful BOOLEAN NOT NULL,
+    PRIMARY KEY (review_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_review_film_id ON review(film_id);
+CREATE INDEX IF NOT EXISTS idx_review_useful_desc ON review(useful DESC);

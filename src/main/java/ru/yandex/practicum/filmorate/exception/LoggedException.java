@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.exception;
 
-import java.util.List;
-
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yandex.practicum.filmorate.util.Validators;
+
+import java.util.List;
 
 public class LoggedException {
 
@@ -56,6 +56,19 @@ public class LoggedException {
                 exception = new NotFoundException(
                         String.format("Ошибка при удалении лайка. Пользователь id=%d не ставил лайк фильму id=%d.",
                                 id.get(0), id.get(1))
+                );
+            }
+            case REVIEW_NOT_FOUND -> {
+                exception = new NotFoundException(String.format("Отзыв id=%d не найден.", id.getFirst()));
+            }
+            case REVIEW_FEEDBACK_ALREADY_EXISTS -> {
+                exception = new ValidationException(
+                        String.format("Пользователь id=%d уже оставил реакцию на отзыв id=%d.", id.get(1), id.get(0))
+                );
+            }
+            case REVIEW_FEEDBACK_NOT_EXISTS -> {
+                exception = new NotFoundException(
+                        String.format("Реакция пользователя id=%d на отзыв id=%d отсутствует.", id.get(1), id.get(0))
                 );
             }
             case INVALID_FILM_RELEASE_DATE -> {
