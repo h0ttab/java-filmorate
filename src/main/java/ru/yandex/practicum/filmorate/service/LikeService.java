@@ -34,17 +34,13 @@ public class LikeService {
 
     public void removeLike(Integer filmId, Integer userId) {
         validators.validateLikeExists(filmId, userId, getClass());
-        Integer likeId = feedService.getLikeId(filmId, userId);
         likeStorage.removeLike(filmId, userId);
-        if (likeId != null) {
-            Feed feed = new Feed(Instant.now().toEpochMilli(),
-                    userId,
-                    Event.LIKE.toString(),
-                    Operation.REMOVE.toString(),
-                    filmId
-            );
-            feedService.save(feed);
-        }
+        Feed feed = new Feed(Instant.now().toEpochMilli(),
+                userId,
+                Event.LIKE.toString(),
+                Operation.REMOVE.toString(),
+                filmId);
+        feedService.save(feed);
     }
 
     public List<Integer> getLikesByFilmId(Integer filmId) {

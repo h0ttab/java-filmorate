@@ -20,14 +20,6 @@ public class FeedService {
         return feedDbStorage.findById(id);
     }
 
-    public Integer getLikeId(Integer filmId, Integer userId) {
-        return feedDbStorage.getLikeId(filmId, userId);
-    }
-
-    public Integer getFriendId(Integer userIdA, Integer userIdB) {
-        return feedDbStorage.getFriendId(userIdA, userIdB);
-    }
-
     public void save(Feed feed) {
         this.feedDbStorage.save(feed);
     }

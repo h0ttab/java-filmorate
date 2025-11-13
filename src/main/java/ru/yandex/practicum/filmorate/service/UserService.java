@@ -94,16 +94,13 @@ public class UserService {
     public void removeFriend(Integer userIdA, Integer userIdB) {
         findById(userIdA);
         findById(userIdB);
-        Integer friendId = feedService.getFriendId(userIdA, userIdB);
         userStorage.removeFriend(userIdA, userIdB);
-        if (friendId != null) {
-            Feed feed = new Feed(Instant.now().toEpochMilli(),
-                    userIdA,
-                    Event.FRIEND.toString(),
-                    Operation.REMOVE.toString(),
-                    userIdB);
-            feedService.save(feed);
-        }
+        Feed feed = new Feed(Instant.now().toEpochMilli(),
+                userIdA,
+                Event.FRIEND.toString(),
+                Operation.REMOVE.toString(),
+                userIdB);
+        feedService.save(feed);
     }
 
     public void delete(Integer userId) {

@@ -9,9 +9,5 @@ public interface FeedStorage {
 
     List<Feed> findById(Integer id);
 
-    Integer getLikeId(Integer filmId, Integer userId);
-
-    Integer getFriendId(Integer userIdA, Integer userIdB);
-
     void save(Feed feed);
 }
