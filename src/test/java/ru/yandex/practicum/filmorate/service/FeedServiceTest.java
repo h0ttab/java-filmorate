@@ -17,16 +17,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FeedServiceTest {
     @Autowired
     private FeedService feedService;
-
-    private void assertFeed(Feed feed, Long timestamp, Integer userId, String eventType, String operation,
-                            Integer entityId) {
-        assertThat(feed)
-                .hasFieldOrPropertyWithValue("timestamp", timestamp)
-                .hasFieldOrPropertyWithValue("userId", userId)
-                .hasFieldOrPropertyWithValue("eventType", eventType)
-                .hasFieldOrPropertyWithValue("operation", operation)
-                .hasFieldOrPropertyWithValue("entityId", entityId);
-    }
+    private final String LIKE = Event.LIKE.toString();
+    private final String REVIEW = Event.REVIEW.toString();
+    private final String FRIEND = Event.FRIEND.toString();
+    private final String REMOVE = Operation.REMOVE.toString();
+    private final String UPDATE = Operation.UPDATE.toString();
+    private final String ADD = Operation.ADD.toString();
 
     @Test
     public void testFindById() {
@@ -36,25 +32,20 @@ public class FeedServiceTest {
                 .hasSize(3)
                 .extracting(Feed::getEventId)
                 .containsExactlyInAnyOrder(1, 2, 3);
-        assertThat(feeds.get(0).getEventType()).isEqualTo(Event.LIKE.toString());
-        assertThat(feeds.get(1).getEventType()).isEqualTo(Event.REVIEW.toString());
-        assertThat(feeds.get(2).getEventType()).isEqualTo(Event.FRIEND.toString());
-        assertThat(feeds.get(0).getOperation()).isEqualTo(Operation.REMOVE.toString());
-        assertThat(feeds.get(1).getOperation()).isEqualTo(Operation.UPDATE.toString());
-        assertThat(feeds.get(2).getOperation()).isEqualTo(Operation.ADD.toString());
-        assertThat(feeds.get(0).getEntityId()).isEqualTo(333);
-        assertThat(feeds.get(1).getEntityId()).isEqualTo(1);
-        assertThat(feeds.get(2).getEntityId()).isEqualTo(2);
-        //feeds.forEach(feed -> {
-        //    if (feed.getEventId() == 1) {
-        //        assertFeed(feed,
-        //                915138000000L,
-        //                1,
-        //                Event.LIKE.toString(),
-        //                Operation.REMOVE.toString(),
-        //                333);
-        //    }
-        //});
+
+        Feed feedFirst = feeds.get(0);
+        Feed feedSecond = feeds.get(1);
+        Feed feedThird = feeds.get(2);
+
+        assertThat(feedFirst.getEventType()).isEqualTo(LIKE);
+        assertThat(feedSecond.getEventType()).isEqualTo(REVIEW);
+        assertThat(feedThird.getEventType()).isEqualTo(FRIEND);
+        assertThat(feedFirst.getOperation()).isEqualTo(REMOVE);
+        assertThat(feedSecond.getOperation()).isEqualTo(UPDATE);
+        assertThat(feedThird.getOperation()).isEqualTo(ADD);
+        assertThat(feedFirst.getEntityId()).isEqualTo(333);
+        assertThat(feedSecond.getEntityId()).isEqualTo(1);
+        assertThat(feedThird.getEntityId()).isEqualTo(2);
     }
 
     @Test
@@ -66,16 +57,11 @@ public class FeedServiceTest {
                 .extracting(Feed::getEventId)
                 .containsExactlyInAnyOrder(1, 2, 3, 4);
 
-        feeds.forEach(feed -> {
-            if (feed.getEventId() == 4) {
-                assertFeed(feed,
-                        1588626000000L,
-                        2,
-                        Event.REVIEW.toString(),
-                        Operation.ADD.toString(),
-                        3);
-            }
-        });
+        Feed feed = feeds.get(3);
+
+        assertThat(feed.getEventType()).isEqualTo(REVIEW);
+        assertThat(feed.getOperation()).isEqualTo(ADD);
+        assertThat(feed.getEntityId()).isEqualTo(3);
     }
 
     @Test
@@ -93,8 +79,8 @@ public class FeedServiceTest {
         feedService.save(feed);
         Feed saveFeed = feedService.findById(3).getLast();
         feed.setEventId(saveFeed.getEventId());
-        assertThat(feed).isEqualTo(saveFeed);
 
+        assertThat(feed).isEqualTo(saveFeed);
         List<Feed> feedsAfterSave = feedService.findAll();
 
         assertThat(feedsAfterSave)
