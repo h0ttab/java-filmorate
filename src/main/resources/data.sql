@@ -84,14 +84,6 @@ INSERT INTO film_director (film_id, director_id) VALUES
 (3, 3), -- Шрек (ID=3) -> Эндрю Адамсон (ID=3)
 (3, 4); -- Шрек (ID=3) -> Вики Дженсон (ID=4)
 
-
-INSERT INTO film_director (film_id, director_id) VALUES
-(2, 1), -- Форрест Гамп (ID=2) -> Роберт Земекис (ID=1)
-(1, 2), -- Криминальное чтиво (ID=1) -> Квентин Тарантино (ID=2)
-(3, 3), -- Шрек (ID=3) -> Эндрю Адамсон (ID=3)
-(3, 4); -- Шрек (ID=3) -> Вики Дженсон (ID=4)
-
-
 INSERT INTO "like" (user_id, film_id) VALUES
 (1, 1), -- Иван (ID=1) лайкнул "Криминальное чтиво" (ID=1)
 (2, 1), -- Мария (ID=2) лайкнула "Криминальное чтиво" (ID=1)
@@ -118,15 +110,3 @@ INSERT INTO feed (date, user_id, event_type, operation, entity_id) VALUES
 (NOW() - INTERVAL '4' DAY, 1, 'LIKE',   'REMOVE', 333),
 (NOW() - INTERVAL '3' DAY, 1, 'FILM',   'UPDATE', 1),
 (NOW() - INTERVAL '2' DAY, 1, 'FRIEND', 'ADD', 2);
-INSERT INTO feed (date, user_id, event_type, operation, entity_id) VALUES
-(NOW() - INTERVAL '4' DAY, 1, 'LIKE',   'REMOVE', 333),
-(NOW() - INTERVAL '3' DAY, 1, 'FILM',   'UPDATE', 1),
-(NOW() - INTERVAL '2' DAY, 1, 'FRIEND', 'ADD', 2);
-
-INSERT INTO review (content, is_positive, user_id, film_id, useful) VALUES
-('Отличный сюжет и игра актеров!', TRUE, 1, 1, 1),
-('Ожидал большего от фильма.', FALSE, 2, 2, -1);
-
-INSERT INTO review_feedback (review_id, user_id, is_useful) VALUES
-(1, 2, TRUE),
-(2, 3, FALSE);
