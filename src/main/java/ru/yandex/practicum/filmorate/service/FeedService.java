@@ -27,6 +27,7 @@ public class FeedService {
     public Integer getFriendId(Integer userIdA, Integer userIdB) {
         return feedDbStorage.getFriendId(userIdA, userIdB);
     }
+
     public void save(Feed feed) {
         this.feedDbStorage.save(feed);
     }

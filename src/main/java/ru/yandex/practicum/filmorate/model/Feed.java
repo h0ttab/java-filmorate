@@ -24,15 +24,4 @@ public class Feed {
         this.operation = operation;
         this.entityId = entityId;
     }
-
-    public Feed(final Integer eventId, final Long timestamp, final Integer userId, final String eventType,
-                final String operation,
-                final Integer entityId) {
-        this.eventId = eventId;
-        this.timestamp = timestamp;
-        this.userId = userId;
-        this.eventType = eventType;
-        this.operation = operation;
-        this.entityId = entityId;
-    }
 }
