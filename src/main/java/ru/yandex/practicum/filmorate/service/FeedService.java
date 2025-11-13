@@ -5,18 +5,18 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.storage.feed.FeedDbStorage;
 
-import java.util.Collection;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class FeedService {
     private final FeedDbStorage feedDbStorage;
 
-    public Collection<Feed> findAll() {
+    public List<Feed> findAll() {
         return feedDbStorage.findAll();
     }
 
-    public Collection<Feed> findById(Integer id) {
+    public List<Feed> findById(Integer id) {
         return feedDbStorage.findById(id);
     }
 

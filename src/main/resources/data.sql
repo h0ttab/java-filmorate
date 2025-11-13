@@ -107,6 +107,7 @@ INSERT INTO review_feedback (review_id, user_id, is_useful) VALUES
 (2, 3, FALSE);
 
 INSERT INTO feed (date, user_id, event_type, operation, entity_id) VALUES
-(NOW() - INTERVAL '4' DAY, 1, 'LIKE',   'REMOVE', 333),
-(NOW() - INTERVAL '3' DAY, 1, 'FILM',   'UPDATE', 1),
-(NOW() - INTERVAL '2' DAY, 1, 'FRIEND', 'ADD', 2);
+('1999-01-01', 1, 'LIKE',   'REMOVE', 333),
+('2010-01-01', 1, 'REVIEW', 'UPDATE', 1),
+('2020-01-01', 1, 'FRIEND', 'ADD', 2),
+('2020-05-05', 2, 'REVIEW', 'ADD', 3);
