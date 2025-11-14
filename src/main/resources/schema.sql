@@ -31,8 +31,7 @@ CREATE TABLE IF NOT EXISTS film (
     description VARCHAR(255),
     release_date DATE,
     duration INTEGER,
-    mpa_id INTEGER REFERENCES mpa(id) ON DELETE CASCADE,
-    director_id INTEGER REFERENCES director(id) ON DELETE CASCADE
+    mpa_id INTEGER REFERENCES mpa(id) ON DELETE CASCADE
 );
 
 
@@ -90,5 +89,3 @@ CREATE TABLE IF NOT EXISTS review_feedback (
 
 CREATE INDEX IF NOT EXISTS idx_review_film_id ON review(film_id);
 CREATE INDEX IF NOT EXISTS idx_review_useful_desc ON review(useful DESC);
-CREATE INDEX IF NOT EXISTS idx_film_desc ON film(description);
-CREATE INDEX IF NOT EXISTS idx_director_name ON director(name);
