@@ -43,9 +43,25 @@ public class FilmController {
         filmService.removeLike(id, userId);
     }
 
+    /**
+     * Возвращает список самых популярных фильмов с возможностью фильтрации по жанру и году выпуска
+     * @param count количество фильмов для вывода (по умолчанию 10)
+     * @param genreId идентификатор жанра для фильтрации (опционально)
+     * @param year год выпуска для фильтрации (опционально)
+     * @return список фильмов, отсортированных по количеству лайков (по убыванию)
+     */
     @GetMapping("/popular")
-    public List<Film> findTopLiked(@RequestParam(required = false, defaultValue = "10") int count) {
-        return filmService.findTopLiked(count);
+    public List<Film> findTopLiked(
+            @RequestParam(required = false, defaultValue = "10") int count,
+            @RequestParam(required = false) Integer genreId,
+            @RequestParam(required = false) Integer year) {
+
+        if (genreId == null && year == null) {
+            // Если не указаны дополнительные параметры, используем существующий метод
+            return filmService.findTopLiked(count);
+        }
+
+        return filmService.findTopLiked(count, genreId, year);
     }
 
     @PostMapping
