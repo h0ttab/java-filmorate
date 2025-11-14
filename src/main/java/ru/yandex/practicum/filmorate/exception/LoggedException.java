@@ -88,6 +88,10 @@ public class LoggedException {
             case REQUIRED_FIELD_MISSING -> {
                 exception = new ValidationException("В теле запроса отсутствует одно или несколько обязательных полей.");
             }
+            case INVALID_SEARCH_REQUEST -> {
+                exception = new ValidationException("Некорректно составлен поисковый запрос, или"
+                        + " выбраны некорректные критерии поиска.");
+            }
             default -> exception = new RuntimeException("Произошла непредвиденная ошибка при обработке запроса.");
         }
         log.error(exception.getMessage(), exception);
