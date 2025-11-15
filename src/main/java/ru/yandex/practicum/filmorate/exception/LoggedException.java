@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.exception;
 
+import java.util.List;
+
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yandex.practicum.filmorate.util.Validators;
-
-import java.util.List;
 
 public class LoggedException {
 
