@@ -184,13 +184,7 @@ public class FilmDbStorage implements FilmStorage {
         params.add(count);
 
         // Выполняем запрос с параметрами
-        return jdbcTemplate.query(
-                queryBuilder.toString(),
-                mapper,
-                params.toArray()
-            ).stream()
-            .map(this::addAllAttributesToFilm)
-            .toList();
+        return jdbcTemplate.query(queryBuilder.toString(), mapper, params.toArray());
     }
 
     @Override
