@@ -130,6 +130,69 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(query, mapper, size);
     }
 
+    /**
+     * Находит топ N фильмов по количеству лайков с возможностью фильтрации по жанру и году выпуска.
+     * Метод формирует динамический SQL-запрос в зависимости от переданных параметров фильтрации.
+     *
+     * @param count количество фильмов для вывода
+     * @param genreId идентификатор жанра для фильтрации (null для выборки всех жанров)
+     * @param year год выпуска фильма для фильтрации (null для выборки всех лет)
+     * @return отсортированный по убыванию список фильмов с наибольшим количеством лайков,
+     *         соответствующий указанным критериям фильтрации
+     * @see Film
+     */
+    @Override
+    public List<Film> findTopLiked(int count, Integer genreId, Integer year) {
+        StringBuilder queryBuilder = new StringBuilder("""
+                SELECT f.*, COUNT(l.id) as like_count
+                FROM film AS f
+                LEFT JOIN "like" AS l ON f.id = l.film_id
+                """);
+
+        queryBuilder.append("LEFT JOIN film_genre AS fg ON f.id = fg.film_id ");
+
+        // Начинаем формировать условия WHERE
+        List<Object> params = new ArrayList<>();
+        boolean hasConditions = false;
+
+        // Добавляем условие по жанру, если указан genreId
+        if (genreId != null) {
+            queryBuilder.append("WHERE fg.genre_id = ? ");
+            params.add(genreId);
+            hasConditions = true;
+        }
+
+        // Добавляем условие по году, если указан year
+        if (year != null) {
+            if (hasConditions) {
+                queryBuilder.append("AND ");
+            } else {
+                queryBuilder.append("WHERE ");
+            }
+            queryBuilder.append("EXTRACT(YEAR FROM f.release_date) = ? ");
+            params.add(year);
+        }
+
+        // Добавляем группировку, сортировку и лимит
+        queryBuilder.append("""
+                GROUP BY f.id
+                ORDER BY like_count DESC
+                LIMIT ?
+                """);
+
+        // Добавляем параметр limit
+        params.add(count);
+
+        // Выполняем запрос с параметрами
+        return jdbcTemplate.query(
+                queryBuilder.toString(),
+                mapper,
+                params.toArray()
+            ).stream()
+            .map(this::addAllAttributesToFilm)
+            .toList();
+    }
+
     @Override
     public List<Film> findByDirector(Integer directorId, SortOrder order) {
         String query = """

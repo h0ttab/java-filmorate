@@ -86,4 +86,19 @@ public class FilmService {
         filmStorage.delete(filmId);
     }
 
+    /**
+     * Находит топ N фильмов по количеству лайков с возможностью фильтрации по жанру и году выпуска
+     * @param count количество фильмов для вывода
+     * @param genreId идентификатор жанра для фильтрации (может быть null)
+     * @param year год выпуска для фильтрации (может быть null)
+     * @return список фильмов, отсортированных по количеству лайков (по убыванию)
+     */
+    public List<Film> findTopLiked(int count, Integer genreId, Integer year) {
+        // Проверка существования жанра, если он указан
+        if (genreId != null) {
+            validators.validateGenreExists(genreId, getClass());
+        }
+
+        return filmStorage.findTopLiked(count, genreId, year);
+    }
 }
