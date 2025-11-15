@@ -25,6 +25,7 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Film findById(@PathVariable Integer id) {
+        System.out.println("Отправлен запрос на получение фильма11: " + id);
         return filmService.findById(id);
     }
 

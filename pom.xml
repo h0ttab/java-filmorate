@@ -91,6 +91,7 @@
 					</sourceDirectories>
 					<failOnViolation>true</failOnViolation>
 					<failsOnError>true</failsOnError>
+					<consoleOutput>true</consoleOutput>
 				</configuration>
 				<executions>
 					<execution>
