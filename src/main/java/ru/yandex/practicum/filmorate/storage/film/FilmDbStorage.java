@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -10,14 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ExceptionType;
 import ru.yandex.practicum.filmorate.exception.LoggedException;
 import ru.yandex.practicum.filmorate.model.*;
-import ru.yandex.practicum.filmorate.service.*;
+import ru.yandex.practicum.filmorate.service.DirectorService;
+import ru.yandex.practicum.filmorate.service.GenreService;
 
 @Slf4j
 @Primary
@@ -26,32 +26,13 @@ import ru.yandex.practicum.filmorate.service.*;
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final FilmRowMapper mapper;
-    private final MpaService mpaService;
     private final GenreService genreService;
-    private final LikeService likeService;
     private final DirectorService directorService;
-
-    private Film addAllAttributesToFilm(Film film) {
-        Integer filmId = film.getId();
-        Integer mpaId = film.getMpa().getId();
-
-        Mpa mpa = mpaService.findById(mpaId);
-        List<Genre> genre = genreService.findByFilmId(filmId);
-        List<Integer> likes = likeService.getLikesByFilmId(filmId);
-        List<Director> directors = directorService.findByFilm(filmId);
-        film.setMpa(mpa);
-        film.setGenres(genre);
-        film.getLikes().addAll(likes);
-        film.setDirectors(directors);
-        return film;
-    }
 
     @Override
     public List<Film> findAll() {
         String query = "SELECT * FROM film;";
-        List<Film> films = jdbcTemplate.query(query, mapper);
-        films.forEach(this::addAllAttributesToFilm);
-        return films;
+        return jdbcTemplate.query(query, mapper);
     }
 
     @Override
@@ -61,9 +42,7 @@ public class FilmDbStorage implements FilmStorage {
         if (result.isEmpty()) {
             LoggedException.throwNew(ExceptionType.FILM_NOT_FOUND, getClass(), List.of(filmId));
         }
-        Film film = result.getFirst();
-        addAllAttributesToFilm(film);
-        return film;
+        return result.getFirst();
     }
 
     @Override
@@ -94,7 +73,6 @@ public class FilmDbStorage implements FilmStorage {
         List<Integer> directors = film.getDirectors().stream().mapToInt(Director::getId).boxed().toList();
         directorService.linkDirectorToFilm(film.getId(), directors, false);
         genreService.linkGenresToFilm(film.getId(), extractGenreIdSet(film), false);
-        addAllAttributesToFilm(film);
         return film;
     }
 
@@ -125,7 +103,6 @@ public class FilmDbStorage implements FilmStorage {
         List<Integer> directors = film.getDirectors().stream().mapToInt(Director::getId).boxed().toList();
         genreService.linkGenresToFilm(film.getId(), extractGenreIdSet(film), true);
         directorService.linkDirectorToFilm(film.getId(), directors, true);
-        addAllAttributesToFilm(film);
         return film;
     }
 
@@ -150,7 +127,7 @@ public class FilmDbStorage implements FilmStorage {
                     ORDER BY COUNT(l.id) DESC
                     LIMIT ?;
                 """;
-        return jdbcTemplate.query(query, mapper, size).stream().map(this::addAllAttributesToFilm).toList();
+        return jdbcTemplate.query(query, mapper, size);
     }
 
     @Override
@@ -181,9 +158,7 @@ public class FilmDbStorage implements FilmStorage {
                         """;
             }
         }
-        List<Film> films = jdbcTemplate.query(query, mapper, directorId);
-        films.forEach(this::addAllAttributesToFilm);
-        return films;
+        return jdbcTemplate.query(query, mapper, directorId);
     }
 
     private Set<Integer> extractGenreIdSet(Film film) {
