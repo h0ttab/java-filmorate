@@ -167,24 +167,4 @@ public class FilmDbStorage implements FilmStorage {
                 .boxed()
                 .collect(Collectors.toSet());
     }
-
-    @Component
-    @RequiredArgsConstructor
-    private static class FilmRowMapper implements RowMapper<Film> {
-        private final MpaService mpaService;
-        private final GenreService genreService;
-
-        @Override
-        public Film mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-            return Film.builder()
-                    .id(resultSet.getInt("ID"))
-                    .name(resultSet.getString("NAME"))
-                    .description(resultSet.getString("DESCRIPTION"))
-                    .releaseDate(resultSet.getDate("RELEASE_DATE").toLocalDate())
-                    .duration(resultSet.getInt("DURATION"))
-                    .mpa(mpaService.findById(resultSet.getInt("MPA_ID")))
-                    .genres(genreService.findByFilmId(resultSet.getInt("ID")))
-                    .build();
-        }
-    }
 }
