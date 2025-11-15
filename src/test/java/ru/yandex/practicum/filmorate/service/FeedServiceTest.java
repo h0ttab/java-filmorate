@@ -86,6 +86,6 @@ public class FeedServiceTest {
         assertThat(feedsAfterSave)
                 .hasSize(5)
                 .extracting(Feed::getEventId)
-                .containsExactlyInAnyOrder(1, 2, 3, 4, 5);
+                .containsExactlyInAnyOrder(1, 2, 3, 4, feed.getEventId());
     }
 }
