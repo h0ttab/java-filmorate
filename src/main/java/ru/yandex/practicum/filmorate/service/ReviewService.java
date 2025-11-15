@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.mapper.ReviewMapper;
@@ -9,8 +11,6 @@ import ru.yandex.practicum.filmorate.model.dto.review.ReviewUpdateDto;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 import ru.yandex.practicum.filmorate.util.DtoHelper;
 import ru.yandex.practicum.filmorate.util.Validators;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

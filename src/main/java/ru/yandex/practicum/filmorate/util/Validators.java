@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.util;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ExceptionType;
 import ru.yandex.practicum.filmorate.exception.LoggedException;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
