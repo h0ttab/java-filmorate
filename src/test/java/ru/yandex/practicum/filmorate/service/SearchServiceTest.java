@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.service;
 
 import java.util.List;
 import java.util.Set;
@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.director.DirectorDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmRowMapper;
@@ -47,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         FilmService.class,
         DtoHelper.class
 })
-public class SearchTest {
+public class SearchServiceTest {
     private final SearchService searchService;
     private final FilmService filmService;
 
