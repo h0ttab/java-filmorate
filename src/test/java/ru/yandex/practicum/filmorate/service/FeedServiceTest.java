@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.*;
 
+import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,7 +70,7 @@ public class FeedServiceTest {
                 .extracting(Feed::getEventId)
                 .containsExactlyInAnyOrder(1, 2, 3, 4);
 
-        Feed feed = new Feed(915138000000L, 3, FRIEND, ADD,2);
+        Feed feed = new Feed(Instant.now().toEpochMilli(), 3, FRIEND, ADD,2);
 
         feedService.save(feed.getUserId(), feed.getEventType(), feed.getOperation(), feed.getEntityId());
         Feed saveFeed = feedService.findById(3).getLast();
