@@ -40,8 +40,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/feed")
-    public Collection<Feed> getFeedsByUser(@PathVariable Integer userId) {
-        return userService.getFeedsByUser(userId);
+    public Collection<Feed> getUserFeed(@PathVariable Integer userId) {
+        return userService.getUserFeed(userId);
     }
 
     @GetMapping("//feed")

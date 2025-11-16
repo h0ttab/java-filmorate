@@ -6,9 +6,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.FeedEventType;
 import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.FeedOperationType;
 import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
 
@@ -25,8 +25,8 @@ public class LikeService {
         likeStorage.addLike(filmId, userId);
         Feed feed = new Feed(Instant.now().toEpochMilli(),
                 userId,
-                Event.LIKE.toString(),
-                Operation.ADD.toString(),
+                FeedEventType.LIKE.toString(),
+                FeedOperationType.ADD.toString(),
                 filmId
         );
         feedService.save(feed);
@@ -37,8 +37,8 @@ public class LikeService {
         likeStorage.removeLike(filmId, userId);
         Feed feed = new Feed(Instant.now().toEpochMilli(),
                 userId,
-                Event.LIKE.toString(),
-                Operation.REMOVE.toString(),
+                FeedEventType.LIKE.toString(),
+                FeedOperationType.REMOVE.toString(),
                 filmId);
         feedService.save(feed);
     }
