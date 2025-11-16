@@ -1,28 +1,23 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.config.ControllerTest;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.model.dto.ObjectIdDto;
 import ru.yandex.practicum.filmorate.model.dto.film.FilmCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.service.LikeService;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Тесты для FilmController
@@ -272,10 +267,10 @@ public class FilmControllerTest {
         // Выводим информацию о фильмах в ответе для отладки
         System.out.println("[DEBUG_LOG] Films in response: " + films);
         System.out.println("[DEBUG_LOG] Expected film IDs: " +
-                           dramaFilm2020.getId() + ", " +
-                           comedyFilm2020.getId() + ", " +
-                           dramaFilm2021.getId() + ", " +
-                           comedyFilm2021.getId());
+                dramaFilm2020.getId() + ", " +
+                comedyFilm2020.getId() + ", " +
+                dramaFilm2021.getId() + ", " +
+                comedyFilm2021.getId());
 
         // Проверяем, что в ответе есть хотя бы один фильм с жанром "Комедия" или "Драма"
         boolean containsComedyOrDrama = films.stream()
@@ -382,8 +377,8 @@ public class FilmControllerTest {
 
         System.out.println("[DEBUG_LOG] Films from 2020 in response: " + films2020);
         System.out.println("[DEBUG_LOG] Expected film IDs from 2020: " +
-                           dramaFilm2020.getId() + ", " +
-                           comedyFilm2020.getId());
+                dramaFilm2020.getId() + ", " +
+                comedyFilm2020.getId());
 
         // Проверяем, что список не пустой
         assertThat(films2020).isNotNull();
@@ -410,8 +405,8 @@ public class FilmControllerTest {
 
         System.out.println("[DEBUG_LOG] Films from 2021 in response: " + films2021);
         System.out.println("[DEBUG_LOG] Expected film IDs from 2021: " +
-                           dramaFilm2021.getId() + ", " +
-                           comedyFilm2021.getId());
+                dramaFilm2021.getId() + ", " +
+                comedyFilm2021.getId());
 
         // Проверяем, что список не пустой
         assertThat(films2021).isNotNull();
@@ -515,13 +510,13 @@ public class FilmControllerTest {
             if (!topTwoFilms.isEmpty()) {
                 boolean allFilmsHaveRequiredFields = topTwoFilms.stream()
                         .allMatch(film ->
-                            film.containsKey("id") &&
-                            film.containsKey("name") &&
-                            film.containsKey("description") &&
-                            film.containsKey("releaseDate") &&
-                            film.containsKey("duration") &&
-                            film.containsKey("mpa") &&
-                            film.containsKey("genres")
+                                film.containsKey("id") &&
+                                        film.containsKey("name") &&
+                                        film.containsKey("description") &&
+                                        film.containsKey("releaseDate") &&
+                                        film.containsKey("duration") &&
+                                        film.containsKey("mpa") &&
+                                        film.containsKey("genres")
                         );
 
                 assertThat(allFilmsHaveRequiredFields).isTrue();
