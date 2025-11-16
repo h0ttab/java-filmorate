@@ -7,10 +7,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.FeedEventType;
+import ru.yandex.practicum.filmorate.model.OperationType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Primary
@@ -18,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FeedDbStorage implements FeedStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final FeedRowMapper mapper = new FeedRowMapper();
+    private final FeedRowMapper mapper;
 
     @Override
     public List<Feed> findAll() {
@@ -33,15 +35,15 @@ public class FeedDbStorage implements FeedStorage {
     }
 
     @Override
-    public void save(Feed feed) {
-        String query = "INSERT INTO feed (date, user_id, event_type, operation, entity_id) VALUES (?, ?, ?, ?, ?);";
-        Date date = new Date(feed.getTimestamp());
+    public void save(Integer userId, FeedEventType feedEventType, OperationType operationType,
+                     Integer entityId) {
+        String query = "INSERT INTO feed (date, user_id, event_type, operation_type, entity_id) VALUES (?, ?, ?, ?, ?);";
         jdbcTemplate.update(query,
-                date,
-                feed.getUserId(),
-                feed.getEventType(),
-                feed.getOperation(),
-                feed.getEntityId());
+                Instant.now(),
+                userId,
+                feedEventType.toString(),
+                operationType.toString(),
+                entityId);
     }
 
     @Component
@@ -51,10 +53,10 @@ public class FeedDbStorage implements FeedStorage {
         public Feed mapRow(ResultSet resultSet, int rowNum) throws SQLException {
             Feed feed = new Feed();
             feed.setEventId(resultSet.getInt("ID"));
-            feed.setTimestamp(resultSet.getTimestamp("DATE").toInstant().toEpochMilli());
+            feed.setTimestamp(resultSet.getTimestamp("DATE").getTime());
             feed.setUserId(resultSet.getInt("USER_ID"));
-            feed.setEventType(resultSet.getString("EVENT_TYPE"));
-            feed.setOperation(resultSet.getString("OPERATION"));
+            feed.setEventType(FeedEventType.valueOf(resultSet.getString("EVENT_TYPE")));
+            feed.setOperation(OperationType.valueOf(resultSet.getString("OPERATION_TYPE")));
             feed.setEntityId(resultSet.getInt("ENTITY_ID"));
             return feed;
         }

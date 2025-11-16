@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-
 @Data
 @RequiredArgsConstructor
 public class Feed {
@@ -13,9 +12,9 @@ public class Feed {
     @NonNull
     private Integer userId;
     @NonNull
-    private String eventType;
+    private FeedEventType eventType;
     @NonNull
-    private String operation;
+    private OperationType operation;
     private Integer eventId;
     @NonNull
     private Integer entityId;

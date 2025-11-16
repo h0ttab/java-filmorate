@@ -3,9 +3,6 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.mapper.ReviewMapper;
-import ru.yandex.practicum.filmorate.model.FeedEventType;
-import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.FeedOperationType;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.dto.review.ReviewCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.review.ReviewUpdateDto;
@@ -13,8 +10,10 @@ import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 import ru.yandex.practicum.filmorate.util.DtoHelper;
 import ru.yandex.practicum.filmorate.util.Validators;
 
-import java.time.Instant;
 import java.util.List;
+
+import static ru.yandex.practicum.filmorate.model.FeedEventType.*;
+import static ru.yandex.practicum.filmorate.model.OperationType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,12 +27,7 @@ public class ReviewService {
     public Review create(ReviewCreateDto dto) {
         Review review = mapper.toEntity(dto);
         Review createReview = reviewStorage.create(review);
-        Feed feed = new Feed(Instant.now().toEpochMilli(),
-                createReview.getUserId(),
-                FeedEventType.REVIEW.toString(),
-                FeedOperationType.ADD.toString(),
-                createReview.getReviewId());
-        feedService.save(feed);
+        feedService.save(createReview.getUserId(), REVIEW, ADD, createReview.getReviewId());
         return createReview;
     }
 
@@ -43,24 +37,14 @@ public class ReviewService {
         Review patch = mapper.toEntity(dto);
         Review merged = (Review) dtoHelper.transferFields(original, patch);
         Review updateReview = reviewStorage.update(merged);
-        Feed feed = new Feed(Instant.now().toEpochMilli(),
-                updateReview.getUserId(),
-                FeedEventType.REVIEW.toString(),
-                FeedOperationType.UPDATE.toString(),
-                updateReview.getReviewId());
-        feedService.save(feed);
+        feedService.save(updateReview.getUserId(), REVIEW, UPDATE, updateReview.getReviewId());
         return updateReview;
     }
 
     public void delete(Integer id) {
         validators.validateReviewExists(id, getClass());
         Review deleteReview = reviewStorage.findById(id);
-        Feed feed = new Feed(Instant.now().toEpochMilli(),
-                deleteReview.getUserId(),
-                FeedEventType.REVIEW.toString(),
-                FeedOperationType.REMOVE.toString(),
-                id);
-        feedService.save(feed);
+        feedService.save(deleteReview.getUserId(), REVIEW, REMOVE, id);
         reviewStorage.delete(id);
     }
 

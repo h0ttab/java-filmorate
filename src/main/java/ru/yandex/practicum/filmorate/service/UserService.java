@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.time.Instant;
 import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -8,15 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
-import ru.yandex.practicum.filmorate.model.FeedEventType;
 import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.FeedOperationType;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserUpdateDto;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.util.DtoHelper;
 import ru.yandex.practicum.filmorate.util.Validators;
+
+import static ru.yandex.practicum.filmorate.model.FeedEventType.*;
+import static ru.yandex.practicum.filmorate.model.OperationType.*;
 
 @Slf4j
 @Service
@@ -83,24 +83,14 @@ public class UserService {
         findById(userIdB);
         validators.validateFriendshipNotExists(userIdA, userIdB, getClass());
         userStorage.addFriend(userIdA, userIdB);
-        Feed feed = new Feed(Instant.now().toEpochMilli(),
-                userIdA,
-                FeedEventType.FRIEND.toString(),
-                FeedOperationType.ADD.toString(),
-                userIdB);
-        feedService.save(feed);
+        feedService.save(userIdA, FRIEND, ADD, userIdB);
     }
 
     public void removeFriend(Integer userIdA, Integer userIdB) {
         findById(userIdA);
         findById(userIdB);
         userStorage.removeFriend(userIdA, userIdB);
-        Feed feed = new Feed(Instant.now().toEpochMilli(),
-                userIdA,
-                FeedEventType.FRIEND.toString(),
-                FeedOperationType.REMOVE.toString(),
-                userIdB);
-        feedService.save(feed);
+        feedService.save(userIdA, FRIEND, REMOVE, userIdB);
     }
 
     public void delete(Integer userId) {

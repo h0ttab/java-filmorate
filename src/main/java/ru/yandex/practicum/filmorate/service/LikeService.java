@@ -1,16 +1,15 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.time.Instant;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.FeedEventType;
-import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.FeedOperationType;
 import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
+
+import static ru.yandex.practicum.filmorate.model.FeedEventType.*;
+import static ru.yandex.practicum.filmorate.model.OperationType.*;
 
 @Slf4j
 @Service
@@ -23,24 +22,13 @@ public class LikeService {
     public void addLike(Integer filmId, Integer userId) {
         validators.validateLikeNotExists(filmId, userId, getClass());
         likeStorage.addLike(filmId, userId);
-        Feed feed = new Feed(Instant.now().toEpochMilli(),
-                userId,
-                FeedEventType.LIKE.toString(),
-                FeedOperationType.ADD.toString(),
-                filmId
-        );
-        feedService.save(feed);
+        feedService.save(userId, LIKE, ADD, filmId);
     }
 
     public void removeLike(Integer filmId, Integer userId) {
         validators.validateLikeExists(filmId, userId, getClass());
         likeStorage.removeLike(filmId, userId);
-        Feed feed = new Feed(Instant.now().toEpochMilli(),
-                userId,
-                FeedEventType.LIKE.toString(),
-                FeedOperationType.REMOVE.toString(),
-                filmId);
-        feedService.save(feed);
+        feedService.save(userId, LIKE, REMOVE, filmId);
     }
 
     public List<Integer> getLikesByFilmId(Integer filmId) {

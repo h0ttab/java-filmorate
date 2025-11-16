@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS film (
     director_id INTEGER REFERENCES director(id) ON DELETE CASCADE
 );
 
-
 CREATE TABLE IF NOT EXISTS film_director (
     id SERIAL PRIMARY KEY,
     film_id integer REFERENCES film(id) ON DELETE CASCADE,
@@ -78,7 +77,7 @@ CREATE TABLE IF NOT EXISTS feed (
     date TIMESTAMP NOT NULL,
     user_id INTEGER REFERENCES "user"(id) ON DELETE CASCADE,
     event_type VARCHAR(255) NOT NULL,
-    operation VARCHAR(255) NOT NULL,
+    operation_type VARCHAR(255) NOT NULL,
     entity_id INTEGER NOT NULL
 );
 

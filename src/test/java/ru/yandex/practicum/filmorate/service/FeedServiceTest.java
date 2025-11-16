@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.model.*;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.yandex.practicum.filmorate.model.FeedEventType.*;
+import static ru.yandex.practicum.filmorate.model.OperationType.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -17,12 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FeedServiceTest {
     @Autowired
     private FeedService feedService;
-    private static final String LIKE = FeedEventType.LIKE.toString();
-    private static final String REVIEW = FeedEventType.REVIEW.toString();
-    private static final String FRIEND = FeedEventType.FRIEND.toString();
-    private static final String REMOVE = Operation.REMOVE.toString();
-    private static final String UPDATE = Operation.UPDATE.toString();
-    private static final String ADD = Operation.ADD.toString();
 
     @Test
     public void testFindById() {
@@ -73,10 +69,9 @@ public class FeedServiceTest {
                 .extracting(Feed::getEventId)
                 .containsExactlyInAnyOrder(1, 2, 3, 4);
 
-        Feed feed = new Feed(915138000000L, 3, FeedEventType.FRIEND.toString(), Operation.ADD.toString(),
-                2);
+        Feed feed = new Feed(915138000000L, 3, FRIEND, ADD,2);
 
-        feedService.save(feed);
+        feedService.save(feed.getUserId(), feed.getEventType(), feed.getOperation(), feed.getEntityId());
         Feed saveFeed = feedService.findById(3).getLast();
         feed.setEventId(saveFeed.getEventId());
 

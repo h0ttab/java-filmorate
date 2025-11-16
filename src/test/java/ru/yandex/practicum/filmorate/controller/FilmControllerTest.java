@@ -21,7 +21,6 @@ import ru.yandex.practicum.filmorate.model.dto.film.FilmCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.service.LikeService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 /**
@@ -39,9 +38,6 @@ public class FilmControllerTest {
 
     @Autowired
     private GenreService genreService;
-
-    @Autowired
-    private LikeService likeService;
 
     @Autowired
     private UserService userService;

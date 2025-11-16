@@ -170,9 +170,8 @@ public class FilmDbStorage implements FilmStorage {
                 SELECT f.*, COUNT(l.id) as like_count
                 FROM film AS f
                 LEFT JOIN "like" AS l ON f.id = l.film_id
+                LEFT JOIN film_genre AS fg ON f.id = fg.film_id
                 """);
-
-        queryBuilder.append("LEFT JOIN film_genre AS fg ON f.id = fg.film_id ");
 
         // Начинаем формировать условия WHERE
         List<Object> params = new ArrayList<>();
