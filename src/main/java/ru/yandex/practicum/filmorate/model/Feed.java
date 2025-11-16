@@ -1,31 +1,25 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+
+@Data
+@RequiredArgsConstructor
 public class Feed {
+    @NonNull
     private Long timestamp;
+    @NonNull
     private Integer userId;
+    @NonNull
     private String eventType;
+    @NonNull
     private String operation;
     private Integer eventId;
+    @NonNull
     private Integer entityId;
 
     public Feed() {
-    }
-
-    public Feed(Long timestamp, Integer userId, String eventType, String operation,
-                Integer entityId) {
-        this.timestamp = timestamp;
-        this.userId = userId;
-        this.eventType = eventType;
-        this.operation = operation;
-        this.entityId = entityId;
     }
 }

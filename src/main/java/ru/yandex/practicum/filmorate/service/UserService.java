@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
-import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.FeedEventType;
 import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.FeedOperationType;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserUpdateDto;
@@ -48,7 +48,7 @@ public class UserService {
         return userStorage.getFriends(userId);
     }
 
-    public Collection<Feed> getFeedsByUser(Integer userId) {
+    public Collection<Feed> getUserFeed(Integer userId) {
         return feedService.findById(userId);
     }
 
@@ -85,8 +85,8 @@ public class UserService {
         userStorage.addFriend(userIdA, userIdB);
         Feed feed = new Feed(Instant.now().toEpochMilli(),
                 userIdA,
-                Event.FRIEND.toString(),
-                Operation.ADD.toString(),
+                FeedEventType.FRIEND.toString(),
+                FeedOperationType.ADD.toString(),
                 userIdB);
         feedService.save(feed);
     }
@@ -97,8 +97,8 @@ public class UserService {
         userStorage.removeFriend(userIdA, userIdB);
         Feed feed = new Feed(Instant.now().toEpochMilli(),
                 userIdA,
-                Event.FRIEND.toString(),
-                Operation.REMOVE.toString(),
+                FeedEventType.FRIEND.toString(),
+                FeedOperationType.REMOVE.toString(),
                 userIdB);
         feedService.save(feed);
     }

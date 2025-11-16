@@ -3,9 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.mapper.ReviewMapper;
-import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.FeedEventType;
 import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.FeedOperationType;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.dto.review.ReviewCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.review.ReviewUpdateDto;
@@ -30,8 +30,8 @@ public class ReviewService {
         Review createReview = reviewStorage.create(review);
         Feed feed = new Feed(Instant.now().toEpochMilli(),
                 createReview.getUserId(),
-                Event.REVIEW.toString(),
-                Operation.ADD.toString(),
+                FeedEventType.REVIEW.toString(),
+                FeedOperationType.ADD.toString(),
                 createReview.getReviewId());
         feedService.save(feed);
         return createReview;
@@ -45,8 +45,8 @@ public class ReviewService {
         Review updateReview = reviewStorage.update(merged);
         Feed feed = new Feed(Instant.now().toEpochMilli(),
                 updateReview.getUserId(),
-                Event.REVIEW.toString(),
-                Operation.UPDATE.toString(),
+                FeedEventType.REVIEW.toString(),
+                FeedOperationType.UPDATE.toString(),
                 updateReview.getReviewId());
         feedService.save(feed);
         return updateReview;
@@ -57,8 +57,8 @@ public class ReviewService {
         Review deleteReview = reviewStorage.findById(id);
         Feed feed = new Feed(Instant.now().toEpochMilli(),
                 deleteReview.getUserId(),
-                Event.REVIEW.toString(),
-                Operation.REMOVE.toString(),
+                FeedEventType.REVIEW.toString(),
+                FeedOperationType.REMOVE.toString(),
                 id);
         feedService.save(feed);
         reviewStorage.delete(id);
