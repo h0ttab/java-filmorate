@@ -16,7 +16,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
 
     @GetMapping

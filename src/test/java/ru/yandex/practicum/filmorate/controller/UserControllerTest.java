@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import java.time.LocalDate;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,9 @@ import ru.yandex.practicum.filmorate.config.ControllerTest;
 import ru.yandex.practicum.filmorate.model.User;
 
 @ControllerTest
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserControllerTest {
-    @Autowired
-    private WebTestClient webTestClient;
+    private final WebTestClient webTestClient;
 
     @Test
     void shouldFailOnInvalidInput_createUserTest_emptyUser() {

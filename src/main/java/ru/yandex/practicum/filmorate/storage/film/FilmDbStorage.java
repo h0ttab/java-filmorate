@@ -210,9 +210,7 @@ public class FilmDbStorage implements FilmStorage {
                 queryBuilder.toString(),
                 mapper,
                 params.toArray()
-            ).stream()
-            .map(this::addAllAttributesToFilm)
-            .toList();
+        );
     }
 
     @Override

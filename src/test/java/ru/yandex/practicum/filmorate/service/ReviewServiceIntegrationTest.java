@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,12 +20,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ReviewServiceIntegrationTest {
-    @Autowired
-    private ReviewService reviewService;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final ReviewService reviewService;
+    private final JdbcTemplate jdbcTemplate;
 
     private ReviewCreateDto.ReviewCreateDtoBuilder defaultReviewBuilder() {
         return ReviewCreateDto.builder()

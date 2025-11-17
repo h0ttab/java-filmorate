@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,9 +18,9 @@ import static ru.yandex.practicum.filmorate.model.OperationType.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FeedServiceTest {
-    @Autowired
-    private FeedService feedService;
+    private final FeedService feedService;
 
     @Test
     public void testFindById() {
