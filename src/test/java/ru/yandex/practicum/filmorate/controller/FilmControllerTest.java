@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,6 @@ import ru.yandex.practicum.filmorate.model.dto.film.FilmCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.service.LikeService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 /**
@@ -30,21 +30,12 @@ import ru.yandex.practicum.filmorate.service.UserService;
  */
 @ControllerTest
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmControllerTest {
-    @Autowired
-    private WebTestClient webTestClient;
-
-    @Autowired
-    private FilmService filmService;
-
-    @Autowired
-    private GenreService genreService;
-
-    @Autowired
-    private LikeService likeService;
-
-    @Autowired
-    private UserService userService;
+    private final WebTestClient webTestClient;
+    private final FilmService filmService;
+    private final GenreService genreService;
+    private final UserService userService;
 
     private Film comedyFilm2020;
     private Film comedyFilm2021;

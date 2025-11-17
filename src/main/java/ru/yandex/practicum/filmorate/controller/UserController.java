@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserUpdateDto;
@@ -15,7 +16,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
 
     @GetMapping
@@ -36,6 +36,16 @@ public class UserController {
     @DeleteMapping("/{id}/friends/{friendId}")
     public void removeFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
         userService.removeFriend(id, friendId);
+    }
+
+    @GetMapping("/{userId}/feed")
+    public Collection<Feed> getUserFeed(@PathVariable Integer userId) {
+        return userService.getUserFeed(userId);
+    }
+
+    @GetMapping("/feed")
+    public Collection<Feed> getAllFeeds() {
+        return userService.getAllFeeds();
     }
 
     @GetMapping("/{id}/friends")

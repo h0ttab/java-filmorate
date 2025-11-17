@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +28,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmServiceTest {
-    @Autowired
-    private FilmService filmService;
-
-    @Autowired
-    private GenreService genreService;
-
-    @Autowired
-    private LikeService likeService;
-
-    @Autowired
-    private UserService userService;
+    private final FilmService filmService;
+    private final GenreService genreService;
+    private final LikeService likeService;
+    private final UserService userService;
 
     private Film comedyFilm2020;
     private Film comedyFilm2021;

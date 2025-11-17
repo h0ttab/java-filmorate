@@ -1,8 +1,3 @@
-DELETE FROM review_feedback;
-
-DELETE FROM review;
-ALTER TABLE review ALTER COLUMN id RESTART WITH 1;
-
 DELETE FROM mpa;
 ALTER TABLE mpa ALTER COLUMN id RESTART WITH 1;
 
@@ -29,6 +24,9 @@ ALTER TABLE film_director ALTER COLUMN id RESTART WITH 1;
 
 DELETE FROM director;
 ALTER TABLE director ALTER COLUMN id RESTART WITH 1;
+
+DELETE FROM feed;
+ALTER TABLE feed ALTER COLUMN id RESTART WITH 1;
 
 INSERT INTO mpa (name) VALUES
 ('G'),
@@ -69,13 +67,11 @@ INSERT INTO film_genre (film_id, genre_id) VALUES
 (3, 3), -- Шрек (ID=3) -> Мультфильм (ID=3)
 (3, 1); -- Шрек (ID=3) -> Комедия (ID=1)
 
-
 INSERT INTO film_director (film_id, director_id) VALUES
 (2, 1), -- Форрест Гамп (ID=2) -> Роберт Земекис (ID=1)
 (1, 2), -- Криминальное чтиво (ID=1) -> Квентин Тарантино (ID=2)
 (3, 3), -- Шрек (ID=3) -> Эндрю Адамсон (ID=3)
 (3, 4); -- Шрек (ID=3) -> Вики Дженсон (ID=4)
-
 
 INSERT INTO "like" (user_id, film_id) VALUES
 (1, 1), -- Иван (ID=1) лайкнул "Криминальное чтиво" (ID=1)
@@ -98,3 +94,9 @@ INSERT INTO review (content, is_positive, user_id, film_id, useful) VALUES
 INSERT INTO review_feedback (review_id, user_id, is_useful) VALUES
 (1, 2, TRUE),
 (2, 3, FALSE);
+
+INSERT INTO feed (date, user_id, event_type, operation_type, entity_id) VALUES
+('1999-01-01', 1, 'LIKE',   'REMOVE', 333),
+('2010-01-01', 1, 'REVIEW', 'UPDATE', 1),
+('2020-01-01', 1, 'FRIEND', 'ADD', 2),
+('2020-05-05', 2, 'REVIEW', 'ADD', 3);

@@ -12,17 +12,23 @@ import ru.yandex.practicum.filmorate.util.Validators;
 
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.model.FeedEventType.*;
+import static ru.yandex.practicum.filmorate.model.OperationType.*;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewStorage reviewStorage;
+    private final FeedService feedService;
     private final Validators validators;
     private final ReviewMapper mapper;
     private final DtoHelper dtoHelper;
 
     public Review create(ReviewCreateDto dto) {
         Review review = mapper.toEntity(dto);
-        return reviewStorage.create(review);
+        Review createReview = reviewStorage.create(review);
+        feedService.save(createReview.getUserId(), REVIEW, ADD, createReview.getReviewId());
+        return createReview;
     }
 
     public Review update(ReviewUpdateDto dto) {
@@ -30,11 +36,15 @@ public class ReviewService {
         Review original = reviewStorage.findById(dto.getReviewId());
         Review patch = mapper.toEntity(dto);
         Review merged = (Review) dtoHelper.transferFields(original, patch);
-        return reviewStorage.update(merged);
+        Review updateReview = reviewStorage.update(merged);
+        feedService.save(updateReview.getUserId(), REVIEW, UPDATE, updateReview.getReviewId());
+        return updateReview;
     }
 
     public void delete(Integer id) {
         validators.validateReviewExists(id, getClass());
+        Review deleteReview = reviewStorage.findById(id);
+        feedService.save(deleteReview.getUserId(), REVIEW, REMOVE, id);
         reviewStorage.delete(id);
     }
 
