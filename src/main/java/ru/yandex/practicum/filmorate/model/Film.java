@@ -3,7 +3,8 @@ package ru.yandex.practicum.filmorate.model;
 import java.time.LocalDate;
 import java.util.*;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder(toBuilder = true)

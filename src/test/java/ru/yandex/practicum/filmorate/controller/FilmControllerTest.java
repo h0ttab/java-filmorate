@@ -6,6 +6,7 @@ import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -25,21 +26,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ControllerTest
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmControllerTest {
-    @Autowired
-    private WebTestClient webTestClient;
-
-    @Autowired
-    private FilmService filmService;
-
-    @Autowired
-    private GenreService genreService;
-
-    @Autowired
-    private LikeService likeService;
-
-    @Autowired
-    private UserService userService;
+    private final WebTestClient webTestClient;
+    private final FilmService filmService;
+    private final GenreService genreService;
+    private final UserService userService;
 
     private Film comedyFilm2020;
     private Film comedyFilm2021;

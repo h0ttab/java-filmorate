@@ -57,11 +57,6 @@ public class FilmController {
             @RequestParam(required = false) Integer genreId,
             @RequestParam(required = false) Integer year) {
 
-        if (genreId == null && year == null) {
-            // Если не указаны дополнительные параметры, используем существующий метод
-            return filmService.findTopLiked(count);
-        }
-
         return filmService.findTopLiked(count, genreId, year);
     }
 

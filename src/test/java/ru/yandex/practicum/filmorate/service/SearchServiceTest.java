@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.director.DirectorDbStorage;
+import ru.yandex.practicum.filmorate.storage.feed.FeedDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmRowMapper;
 import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
@@ -37,6 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
         GenreDbStorage.class,
         FilmMapper.class,
         FilmRowMapper.class,
+        FeedService.class,
+        FeedDbStorage.class,
         LikeDbStorage.class,
         LikeService.class,
         DirectorService.class,

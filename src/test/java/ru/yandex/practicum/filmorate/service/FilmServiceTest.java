@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,18 +27,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmServiceTest {
-    @Autowired
-    private FilmService filmService;
-
-    @Autowired
-    private GenreService genreService;
-
-    @Autowired
-    private LikeService likeService;
-
-    @Autowired
-    private UserService userService;
+    private final FilmService filmService;
+    private final GenreService genreService;
+    private final LikeService likeService;
+    private final UserService userService;
 
     private Film comedyFilm2020;
     private Film comedyFilm2021;
