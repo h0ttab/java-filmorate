@@ -80,8 +80,12 @@ public class SearchServiceTest {
                 "directors", List.of(Director.builder().id(1).name("Роберт Земекис").build())
         );
 
-        Film filmByTitle = searchService.searchFilms("берт", Set.of("director")).getFirst();
-        assertThat(filmById).isEqualTo(filmByTitle);
+        // Ожидается, что по названию найдёт "ШрЕК", а по режиссёру - Роберта ЗемЕКиса (Форрест Гамп)
+        List<Film> films = searchService.searchFilms("ек", Set.of("director", "title"));
+        assertThat(films).containsExactly(
+                filmService.findById(3),
+                filmService.findById(2)
+        );
     }
 
     @Test

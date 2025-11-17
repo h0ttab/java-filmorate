@@ -10,13 +10,13 @@ import ru.yandex.practicum.filmorate.exception.ExceptionType;
 import ru.yandex.practicum.filmorate.exception.LoggedException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.search.SearchTarget;
-import ru.yandex.practicum.filmorate.storage.search.SearchDb;
+import ru.yandex.practicum.filmorate.storage.search.Search;
 import ru.yandex.practicum.filmorate.util.Validators;
 
 @Service
 @RequiredArgsConstructor
 public class SearchService {
-    private final SearchDb search;
+    private final Search search;
     private final Validators validators;
 
     public List<Film> searchFilms(String searchQuery, Set<String> searchRequestTargetParams) {

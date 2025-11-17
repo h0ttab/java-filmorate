@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -73,7 +72,6 @@ public class FeedServiceTest {
                 .extracting(Feed::getEventId)
                 .containsExactlyInAnyOrder(1, 2, 3, 4);
 
-        Date now = Date.from(Instant.now());
         Feed feed = Feed.builder()
                 .timestamp(Instant.now().toEpochMilli())
                 .userId(3)
