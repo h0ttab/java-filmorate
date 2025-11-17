@@ -43,7 +43,7 @@ public class UserController {
         return userService.getUserFeed(userId);
     }
 
-    @GetMapping("//feed")
+    @GetMapping("/feed")
     public Collection<Feed> getAllFeeds() {
         return userService.getAllFeeds();
     }

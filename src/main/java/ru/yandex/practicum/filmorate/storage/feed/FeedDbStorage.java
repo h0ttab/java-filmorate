@@ -51,13 +51,14 @@ public class FeedDbStorage implements FeedStorage {
     private static class FeedRowMapper implements RowMapper<Feed> {
         @Override
         public Feed mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-            Feed feed = new Feed();
-            feed.setEventId(resultSet.getInt("ID"));
-            feed.setTimestamp(resultSet.getTimestamp("DATE").getTime());
-            feed.setUserId(resultSet.getInt("USER_ID"));
-            feed.setEventType(FeedEventType.valueOf(resultSet.getString("EVENT_TYPE")));
-            feed.setOperation(OperationType.valueOf(resultSet.getString("OPERATION_TYPE")));
-            feed.setEntityId(resultSet.getInt("ENTITY_ID"));
+            Feed feed = Feed.builder()
+                    .timestamp(resultSet.getTimestamp("DATE").getTime())
+                    .userId(resultSet.getInt("USER_ID"))
+                    .eventType(FeedEventType.valueOf(resultSet.getString("EVENT_TYPE")))
+                    .operation(OperationType.valueOf(resultSet.getString("OPERATION_TYPE")))
+                    .eventId(resultSet.getInt("ID"))
+                    .entityId(resultSet.getInt("ENTITY_ID"))
+                    .build();
             return feed;
         }
     }

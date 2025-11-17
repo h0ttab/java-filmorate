@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.*;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,7 +72,14 @@ public class FeedServiceTest {
                 .extracting(Feed::getEventId)
                 .containsExactlyInAnyOrder(1, 2, 3, 4);
 
-        Feed feed = new Feed(Instant.now().toEpochMilli(), 3, FRIEND, ADD,2);
+        Date now = Date.from(Instant.now());
+        Feed feed = Feed.builder()
+                .timestamp(Instant.now().toEpochMilli())
+                .userId(3)
+                .eventType(FRIEND)
+                .operation(ADD)
+                .entityId(2)
+                .build();
 
         feedService.save(feed.getUserId(), feed.getEventType(), feed.getOperation(), feed.getEntityId());
         Feed saveFeed = feedService.findById(3).getLast();
