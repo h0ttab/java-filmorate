@@ -67,20 +67,20 @@ public class RecommendationDbStorage implements RecommendationStorage {
 
         // Формируем матрицу лайков
         Map<Integer, Map<Integer, Double>> matrix = new HashMap<>();
-        
+
         // Инициализируем матрицу для всех пользователей
         for (Integer userId : userIds) {
             Map<Integer, Double> userLikes = new HashMap<>();
             matrix.put(userId, userLikes);
         }
-        
+
         // Заполняем матрицу лайками (1.0 для лайка)
         for (Map<String, Object> like : likes) {
             Integer userId = (Integer) like.get("user_id");
             Integer filmId = (Integer) like.get("film_id");
             matrix.get(userId).put(filmId, 1.0);
         }
-        
+
         log.info("Сформирована матрица лайков для {} пользователей и {} фильмов", userIds.size(), filmIds.size());
         return matrix;
     }
@@ -96,17 +96,17 @@ public class RecommendationDbStorage implements RecommendationStorage {
     public List<Film> getRecommendations(Integer userId) {
         // Получаем список фильмов, которым поставил лайк пользователь
         List<Integer> userLikedFilms = getLikedFilmsByUserId(userId);
-        
+
         if (userLikedFilms.isEmpty()) {
             log.info("Пользователь с id {} не поставил ни одного лайка, рекомендации не могут быть сформированы", userId);
             return List.of();
         }
-        
+
         // Формируем строку с идентификаторами фильмов, которым поставил лайк пользователь
         String userLikedFilmsStr = userLikedFilms.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
-        
+
         // SQL-запрос для получения рекомендаций
         // Находим пользователей с максимальным пересечением по лайкам
         // и рекомендуем фильмы, которые они лайкнули, а текущий пользователь - нет
@@ -139,7 +139,7 @@ public class RecommendationDbStorage implements RecommendationStorage {
                 ORDER BY f.id
                 LIMIT 10;
                 """;
-        
+
         List<Film> recommendations = jdbcTemplate.query(query, filmRowMapper, userId, userId);
         log.info("Сформированы рекомендации для пользователя с id {}: {} фильмов", userId, recommendations.size());
         return recommendations;

@@ -10,7 +10,7 @@ import java.util.Map;
  * Предоставляет методы для работы с рекомендациями фильмов.
  */
 public interface RecommendationStorage {
-    
+
     /**
      * Получает список фильмов, которым поставил лайк указанный пользователь.
      *
@@ -18,7 +18,7 @@ public interface RecommendationStorage {
      * @return список идентификаторов фильмов, которым поставил лайк пользователь
      */
     List<Integer> getLikedFilmsByUserId(Integer userId);
-    
+
     /**
      * Получает матрицу лайков пользователей по фильмам.
      * Ключ внешней карты - идентификатор пользователя.
@@ -28,7 +28,7 @@ public interface RecommendationStorage {
      * @return матрица лайков пользователей по фильмам
      */
     Map<Integer, Map<Integer, Double>> getUserFilmLikesMatrix();
-    
+
     /**
      * Получает список рекомендованных фильмов для указанного пользователя.
      *

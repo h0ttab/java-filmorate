@@ -67,18 +67,18 @@ public class RecommendationServiceTest {
     void getRecommendationsTest() {
         // Подготавливаем данные
         List<Film> expectedRecommendations = List.of(film1, film2);
-        
+
         // Настраиваем поведение моков
         doNothing().when(validators).validateUserExits(userId, RecommendationService.class);
         when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
-        
+
         // Вызываем тестируемый метод
         List<Film> actualRecommendations = recommendationService.getRecommendations(userId);
-        
+
         // Проверяем результат
         assertEquals(expectedRecommendations.size(), actualRecommendations.size(), "Размер списка рекомендаций должен совпадать");
         assertEquals(expectedRecommendations, actualRecommendations, "Списки рекомендаций должны совпадать");
-        
+
         // Проверяем, что методы моков были вызваны с правильными параметрами
         verify(validators).validateUserExits(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
@@ -92,17 +92,17 @@ public class RecommendationServiceTest {
     void getRecommendationsEmptyListTest() {
         // Подготавливаем данные
         List<Film> expectedRecommendations = List.of();
-        
+
         // Настраиваем поведение моков
         doNothing().when(validators).validateUserExits(userId, RecommendationService.class);
         when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
-        
+
         // Вызываем тестируемый метод
         List<Film> actualRecommendations = recommendationService.getRecommendations(userId);
-        
+
         // Проверяем результат
         assertEquals(0, actualRecommendations.size(), "Размер списка рекомендаций должен быть 0");
-        
+
         // Проверяем, что методы моков были вызваны с правильными параметрами
         verify(validators).validateUserExits(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);

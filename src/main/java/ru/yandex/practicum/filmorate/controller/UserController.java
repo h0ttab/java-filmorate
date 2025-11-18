@@ -75,7 +75,7 @@ public class UserController {
     public void delete(@PathVariable Integer id) {
         userService.delete(id);
     }
-    
+
     /**
      * Получает список рекомендованных фильмов для указанного пользователя.
      * Рекомендации формируются на основе алгоритма коллаборативной фильтрации:

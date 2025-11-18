@@ -44,7 +44,7 @@ public class RecommendationControllerTest {
     void setUp() {
         // Настраиваем MockMvc
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
-        
+
         // Создаем тестовые фильмы
         film1 = Film.builder()
                 .id(1)
@@ -74,10 +74,10 @@ public class RecommendationControllerTest {
     void getRecommendationsTest() throws Exception {
         // Подготавливаем данные
         List<Film> recommendations = List.of(film1, film2);
-        
+
         // Настраиваем поведение мока
         when(recommendationService.getRecommendations(userId)).thenReturn(recommendations);
-        
+
         // Выполняем запрос и проверяем результат
         mockMvc.perform(get("/users/{id}/recommendations", userId)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -99,10 +99,10 @@ public class RecommendationControllerTest {
     void getRecommendationsEmptyListTest() throws Exception {
         // Подготавливаем данные
         List<Film> recommendations = List.of();
-        
+
         // Настраиваем поведение мока
         when(recommendationService.getRecommendations(userId)).thenReturn(recommendations);
-        
+
         // Выполняем запрос и проверяем результат
         mockMvc.perform(get("/users/{id}/recommendations", userId)
                 .contentType(MediaType.APPLICATION_JSON))
