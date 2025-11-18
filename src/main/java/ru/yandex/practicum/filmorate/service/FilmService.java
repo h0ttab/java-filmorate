@@ -72,6 +72,12 @@ public class FilmService {
         return List.of();
     }
 
+    public List<Film> findCommonFilms(Integer userId, Integer friendId) {
+        validators.validateUserExits(userId, getClass());
+        validators.validateUserExits(friendId, getClass());
+        return filmStorage.findCommonFilms(userId, friendId);
+    }
+
     public Film create(FilmCreateDto filmCreateDto) {
         Film film = filmMapper.toEntity(filmCreateDto);
         return filmStorage.create(film);

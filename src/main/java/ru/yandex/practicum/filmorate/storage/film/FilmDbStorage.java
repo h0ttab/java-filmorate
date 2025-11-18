@@ -217,6 +217,21 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(query, mapper, directorId);
     }
 
+    @Override
+    public List<Film> findCommonFilms(Integer userId, Integer friendId) {
+        String query = """
+                SELECT f.*
+                FROM film f
+                JOIN "like" l_user ON f.id = l_user.film_id AND l_user.user_id = ?
+                JOIN "like" l_friend ON f.id = l_friend.film_id AND l_friend.user_id = ?
+                LEFT JOIN "like" l_all ON f.id = l_all.film_id
+                GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.mpa_id
+                ORDER BY COUNT(l_all.user_id) DESC, f.id;
+                """;
+
+        return jdbcTemplate.query(query, mapper, userId, friendId);
+    }
+
     private Set<Integer> extractGenreIdSet(Film film) {
         return film.getGenres().stream()
                 .mapToInt(Genre::getId)
