@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.exception;
 
+import java.util.List;
+
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.yandex.practicum.filmorate.util.Validators;
-
-import java.util.List;
 
 public class LoggedException {
 
@@ -87,6 +87,10 @@ public class LoggedException {
             }
             case REQUIRED_FIELD_MISSING -> {
                 exception = new ValidationException("В теле запроса отсутствует одно или несколько обязательных полей.");
+            }
+            case INVALID_SEARCH_REQUEST -> {
+                exception = new ValidationException("Некорректно составлен поисковый запрос, или"
+                        + " выбраны некорректные критерии поиска.");
             }
             default -> exception = new RuntimeException("Произошла непредвиденная ошибка при обработке запроса.");
         }

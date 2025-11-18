@@ -1,16 +1,16 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
+import java.time.Instant;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.filmorate.model.*;
-
-import java.time.Instant;
-import java.util.Date;
-import java.util.List;
+import ru.yandex.practicum.filmorate.model.Feed;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.yandex.practicum.filmorate.model.FeedEventType.*;
@@ -72,7 +72,6 @@ public class FeedServiceTest {
                 .extracting(Feed::getEventId)
                 .containsExactlyInAnyOrder(1, 2, 3, 4);
 
-        Date now = Date.from(Instant.now());
         Feed feed = Feed.builder()
                 .timestamp(Instant.now().toEpochMilli())
                 .userId(3)

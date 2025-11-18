@@ -8,8 +8,9 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
 
-import static ru.yandex.practicum.filmorate.model.FeedEventType.*;
-import static ru.yandex.practicum.filmorate.model.OperationType.*;
+import static ru.yandex.practicum.filmorate.model.FeedEventType.LIKE;
+import static ru.yandex.practicum.filmorate.model.OperationType.ADD;
+import static ru.yandex.practicum.filmorate.model.OperationType.REMOVE;
 
 @Slf4j
 @Service

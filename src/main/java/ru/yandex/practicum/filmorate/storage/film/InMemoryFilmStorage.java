@@ -69,11 +69,7 @@ public class InMemoryFilmStorage extends AbstractInMemoryStorage<Film> implement
                     }
 
                     // Фильтрация по году, если указан year
-                    if (year != null && film.getReleaseDate().getYear() != year) {
-                        return false;
-                    }
-
-                    return true;
+                    return year == null || film.getReleaseDate().getYear() == year;
                 })
                 .sorted(Comparator.<Film, Integer>comparing(film -> film.getLikes().size()).reversed())
                 .limit(count)

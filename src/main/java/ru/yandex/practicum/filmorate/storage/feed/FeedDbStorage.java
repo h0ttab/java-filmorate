@@ -1,19 +1,17 @@
 package ru.yandex.practicum.filmorate.storage.feed;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.FeedEventType;
-import ru.yandex.practicum.filmorate.model.OperationType;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.Instant;
-import java.util.List;
+import ru.yandex.practicum.filmorate.model.*;
 
 @Primary
 @Component
@@ -51,7 +49,7 @@ public class FeedDbStorage implements FeedStorage {
     private static class FeedRowMapper implements RowMapper<Feed> {
         @Override
         public Feed mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-            Feed feed = Feed.builder()
+            return Feed.builder()
                     .timestamp(resultSet.getTimestamp("DATE").getTime())
                     .userId(resultSet.getInt("USER_ID"))
                     .eventType(FeedEventType.valueOf(resultSet.getString("EVENT_TYPE")))
@@ -59,7 +57,6 @@ public class FeedDbStorage implements FeedStorage {
                     .eventId(resultSet.getInt("ID"))
                     .entityId(resultSet.getInt("ENTITY_ID"))
                     .build();
-            return feed;
         }
     }
 }

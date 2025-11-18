@@ -1,13 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.FeedEventType;
-import ru.yandex.practicum.filmorate.model.OperationType;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.feed.FeedDbStorage;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

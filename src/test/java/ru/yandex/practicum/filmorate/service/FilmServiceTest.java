@@ -1,22 +1,21 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.model.dto.ObjectIdDto;
 import ru.yandex.practicum.filmorate.model.dto.film.FilmCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
-
-import java.time.LocalDate;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -255,14 +254,14 @@ class FilmServiceTest {
 
         // Проверяем, что возвращается только комедия 2020 года
         assertThat(comedyFilms2020).hasSize(1);
-        assertThat(comedyFilms2020.get(0).getId()).isEqualTo(comedyFilm2020.getId());
+        assertThat(comedyFilms2020.getFirst().getId()).isEqualTo(comedyFilm2020.getId());
 
         // Фильтруем по жанру "Драма" (ID = 2) и 2021 году
         List<Film> dramaFilms2021 = filmService.findTopLiked(10, 2, 2021);
 
         // Проверяем, что возвращается только драма 2021 года
         assertThat(dramaFilms2021).hasSize(1);
-        assertThat(dramaFilms2021.get(0).getId()).isEqualTo(dramaFilm2021.getId());
+        assertThat(dramaFilms2021.getFirst().getId()).isEqualTo(dramaFilm2021.getId());
     }
 
     /**
@@ -279,7 +278,7 @@ class FilmServiceTest {
 
         // Проверяем, что драма 2020 (с наибольшим количеством лайков) присутствует в результатах
         boolean containsDrama2020 = topTwoFilms.stream()
-                .anyMatch(film -> film.getId() == dramaFilm2020.getId());
+                .anyMatch(film -> film.getId().equals(dramaFilm2020.getId()));
         assertThat(containsDrama2020).isTrue();
 
         // Запрашиваем только 1 самый популярный фильм с фильтром по жанру "Комедия"
@@ -290,7 +289,7 @@ class FilmServiceTest {
 
         // Если в результате есть фильмы, проверяем, что это фильм жанра "Комедия"
         if (!topOneComedyFilm.isEmpty()) {
-            Film film = topOneComedyFilm.get(0);
+            Film film = topOneComedyFilm.getFirst();
             boolean isComedy = film.getGenres().stream()
                     .anyMatch(genre -> genre.getId() == 1);
             assertThat(isComedy).as("Фильм должен быть комедией").isTrue();

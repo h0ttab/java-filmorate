@@ -13,17 +13,17 @@ DROP TABLE IF EXISTS film_director CASCADE;
 
 CREATE TABLE IF NOT EXISTS mpa (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
+    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS genre (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
+    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS director (
     id SERIAL PRIMARY KEY,
-    name varchar(255) NOT NULL UNIQUE
+    name varchar(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS film (
@@ -32,8 +32,7 @@ CREATE TABLE IF NOT EXISTS film (
     description VARCHAR(255),
     release_date DATE,
     duration INTEGER,
-    mpa_id INTEGER REFERENCES mpa(id) ON DELETE CASCADE,
-    director_id INTEGER REFERENCES director(id) ON DELETE CASCADE
+    mpa_id INTEGER REFERENCES mpa(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS film_director (

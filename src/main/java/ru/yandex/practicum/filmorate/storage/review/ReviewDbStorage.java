@@ -1,5 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.review;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -9,12 +13,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ExceptionType;
 import ru.yandex.practicum.filmorate.exception.LoggedException;
 import ru.yandex.practicum.filmorate.model.Review;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -103,6 +101,16 @@ public class ReviewDbStorage implements ReviewStorage {
         applyReaction(reviewId, userId, false);
     }
 
+    @Override
+    public void removeUseful(Integer reviewId, Integer userId) {
+        removeReaction(reviewId, userId, true);
+    }
+
+    @Override
+    public void removeUseless(Integer reviewId, Integer userId) {
+        removeReaction(reviewId, userId, false);
+    }
+
     private void applyReaction(Integer reviewId, Integer userId, boolean isUseful) {
         int delta = tryFlipReaction(reviewId, userId, isUseful);
 
@@ -171,17 +179,6 @@ public class ReviewDbStorage implements ReviewStorage {
                 "UPDATE review SET useful = useful + ? WHERE id = ?",
                 delta, reviewId
         );
-    }
-
-
-    @Override
-    public void removeUseful(Integer reviewId, Integer userId) {
-        removeReaction(reviewId, userId, true);
-    }
-
-    @Override
-    public void removeUseless(Integer reviewId, Integer userId) {
-        removeReaction(reviewId, userId, false);
     }
 
     private void removeReaction(Integer reviewId, Integer userId, boolean isUseful) {

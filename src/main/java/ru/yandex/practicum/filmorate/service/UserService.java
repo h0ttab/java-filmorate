@@ -15,8 +15,9 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.util.DtoHelper;
 import ru.yandex.practicum.filmorate.util.Validators;
 
-import static ru.yandex.practicum.filmorate.model.FeedEventType.*;
-import static ru.yandex.practicum.filmorate.model.OperationType.*;
+import static ru.yandex.practicum.filmorate.model.FeedEventType.FRIEND;
+import static ru.yandex.practicum.filmorate.model.OperationType.ADD;
+import static ru.yandex.practicum.filmorate.model.OperationType.REMOVE;
 
 @Slf4j
 @Service
