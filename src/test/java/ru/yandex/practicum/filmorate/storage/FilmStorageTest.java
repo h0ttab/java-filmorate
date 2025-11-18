@@ -151,4 +151,31 @@ public class FilmStorageTest {
         List<Film> films = storage.findTopLiked(3);
         assertThat(films).extracting(Film::getId).containsExactly(3, 1, 2);
     }
+
+    @Test
+    public void testFindCommonFilms_shouldReturnIntersectionSortedByPopularity() {
+        // Иван (id=1) и Мария (id=2) совместно лайкнули фильмы 1 и 3.
+        // По данным data.sql: у фильма 3 три лайка, у фильма 1 — два,
+        // поэтому порядок по популярности должен быть [3, 1].
+        List<Film> films = storage.findCommonFilms(1, 2);
+
+        assertThat(films)
+                .extracting(Film::getId)
+                .containsExactly(3, 1);
+    }
+
+    /**
+     * Тест метода findCommonFilms:
+     * при отсутствии общих лайков должен возвращаться пустой список.
+     *
+     * Здесь второй пользователь (id=999) не имеет ни одной записи в таблице "like",
+     * поэтому пересечение лайкнутых фильмов пользователя 1 и пользователя 999 пустое.
+     * Проверка существования пользователя лежит на сервисном слое, а не на хранилище.
+     */
+    @Test
+    public void testFindCommonFilms_whenNoCommonLikes_shouldReturnEmptyList() {
+        List<Film> films = storage.findCommonFilms(1, 999);
+
+        assertThat(films).isEmpty();
+    }
 }
