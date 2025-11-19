@@ -25,11 +25,11 @@ public class FilmRowMapper implements RowMapper<Film> {
                 .description(resultSet.getString("DESCRIPTION"))
                 .releaseDate(resultSet.getDate("RELEASE_DATE").toLocalDate())
                 .duration(resultSet.getInt("DURATION"))
-                .mpa(mpaService.findById(resultSet.getInt("MPA_ID")))
-                .genres(genreService.findByFilmId(resultSet.getInt("ID")))
-                .directors(directorService.findByFilm(resultSet.getInt("ID")))
+//                .mpa(mpaService.findById(resultSet.getInt("MPA_ID")))
+//                .genres(genreService.findByFilmId(resultSet.getInt("ID")))
+//                .directors(directorService.findByFilmId(resultSet.getInt("ID")))
                 .build();
-        film.getLikes().addAll(likeService.getLikesByFilmId(film.getId()));
+//        film.getLikes().addAll(likeService.getLikesByFilmId(film.getId()));
         return film;
     }
 }

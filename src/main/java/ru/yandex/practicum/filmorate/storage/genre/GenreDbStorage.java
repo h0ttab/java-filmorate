@@ -2,10 +2,9 @@ package ru.yandex.practicum.filmorate.storage.genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.*;
@@ -17,7 +16,8 @@ import ru.yandex.practicum.filmorate.model.Genre;
 public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final RowMapper<Genre> mapper = new GenreRowMapper();
+    private final RowMapper<Genre> mapper;
+    private final RowMapper<GenreBatchDto> batchGenreMapper;
 
     @Override
     public List<Genre> findAll() {
@@ -38,7 +38,7 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public List<Genre> findGenreByFilmId(Integer filmId) {
+    public List<Genre> findByFilmId(Integer filmId) {
         String query = """
                     SELECT g.*
                     FROM genre g
@@ -47,6 +47,23 @@ public class GenreDbStorage implements GenreStorage {
                     ORDER BY fg.genre_id;
                 """;
         return jdbcTemplate.query(query, mapper, filmId);
+    }
+
+    @Override
+    public List<GenreBatchDto> findByFilmIdList(List<Integer> filmIdList) {
+        SqlParameterSource parameters = new MapSqlParameterSource("filmIds", filmIdList);
+        String query = """
+                    SELECT
+                        fg.film_id,
+                        GROUP_CONCAT(g.name SEPARATOR ',') AS genres,
+                        GROUP_CONCAT(g.id SEPARATOR ',') AS genres_id
+                    FROM film_genre fg
+                    JOIN genre g ON g.id = fg.genre_id
+                    WHERE fg.film_id IN (:filmIds)
+                    GROUP BY fg.film_id
+                    ORDER BY fg.film_id;
+                """;
+        return namedParameterJdbcTemplate.query(query, parameters, batchGenreMapper);
     }
 
     @Override
@@ -75,6 +92,7 @@ public class GenreDbStorage implements GenreStorage {
         jdbcTemplate.update(insertQuery.toString());
     }
 
+    @Component
     private static class GenreRowMapper implements RowMapper<Genre> {
         @Override
         public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -84,4 +102,19 @@ public class GenreDbStorage implements GenreStorage {
                     .build();
         }
     }
+
+    @Component
+    private static class BatchGenreRowMapper implements RowMapper<GenreBatchDto> {
+        @Override
+        public GenreBatchDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return GenreBatchDto.builder()
+                    .filmId(rs.getInt("film_id"))
+                    .genresListConcat(rs.getString("genres"))
+                    .genresIdConcat(rs.getString("genres_id"))
+                    .build();
+        }
+    }
+
+    @Builder
+    public record GenreBatchDto(Integer filmId, String genresListConcat, String genresIdConcat) {}
 }

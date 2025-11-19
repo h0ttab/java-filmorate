@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.util.List;
+import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage.LikeBatchDto;
 import ru.yandex.practicum.filmorate.util.Validators;
 
 import static ru.yandex.practicum.filmorate.model.FeedEventType.LIKE;
@@ -34,5 +35,19 @@ public class LikeService {
 
     public List<Integer> getLikesByFilmId(Integer filmId) {
         return likeStorage.getLikesByFilmId(filmId);
+    }
+
+    public Map<Integer, List<Integer>> getLikesByFilmIdList(List<Integer> filmIdList) {
+        List<LikeBatchDto> likeBatchDtoList = likeStorage.getLikesByFilmIdList(filmIdList);
+        Map<Integer, List<Integer>> filmLikeMap = new HashMap<>();
+        likeBatchDtoList.forEach(likeBatchDto -> {
+            Integer filmId = likeBatchDto.filmId();
+            List<Integer> likeUserIdList = Arrays.stream(likeBatchDto.likeList().split(","))
+                    .mapToInt(Integer::parseInt)
+                    .boxed()
+                    .toList();
+            filmLikeMap.put(filmId, likeUserIdList);
+        });
+        return filmLikeMap;
     }
 }

@@ -18,6 +18,7 @@ import ru.yandex.practicum.filmorate.util.Validators;
 public class SearchService {
     private final Search search;
     private final Validators validators;
+    private final FilmService filmService;
 
     public List<Film> searchFilms(String searchQuery, Set<String> searchRequestTargetParams) {
         if (!validators.isValidString(searchQuery)) {
@@ -32,6 +33,7 @@ public class SearchService {
             LoggedException.throwNew(ExceptionType.INVALID_SEARCH_REQUEST, getClass(), List.of());
             return List.of();
         }
-        return search.searchFilms(searchQuery, searchTargetSet);
+        List<Film> films = search.searchFilms(searchQuery, searchTargetSet);
+        return filmService.addAttributes(films);
     }
 }

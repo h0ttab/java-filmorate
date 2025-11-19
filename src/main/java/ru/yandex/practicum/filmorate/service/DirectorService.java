@@ -1,12 +1,13 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.util.List;
+import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.dto.film.DirectorDto;
+import ru.yandex.practicum.filmorate.storage.director.DirectorDbStorage.DirectorBatchDto;
 import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
 
@@ -33,13 +34,32 @@ public class DirectorService {
         return directorStorage.findById(directorId);
     }
 
-    public List<Director> findByFilm(Integer filmId) {
+    public List<Director> findByFilmId(Integer filmId) {
         validators.validateFilmExists(filmId, getClass());
         return directorStorage.findByFilm(filmId);
     }
 
     public List<Director> findByIdList(List<Integer> directorIdList) {
         return directorStorage.findByIdList(directorIdList);
+    }
+
+    public Map<Integer, List<Director>> findByFilmIdList(List<Integer> filmIdList) {
+        List<DirectorBatchDto> directorBatchDtoList = directorStorage.findByFilmIdList(filmIdList);
+        Map<Integer, List<Director>> filmDirectorMap = new HashMap<>();
+        directorBatchDtoList.forEach(directorBatchDto -> {
+            List<Integer> directorIdList = Arrays.stream(directorBatchDto.directorsIdConcat().split(","))
+                    .mapToInt(Integer::parseInt)
+                    .boxed()
+                    .toList();
+            List<String> direcorNameList = Arrays.stream(directorBatchDto.directorsListConcat().split(",")).toList();
+            List<Director> directorList = new ArrayList<>();
+            for (int i = 0; i < direcorNameList.size(); i++) {
+                directorList.add(Director.builder().id(directorIdList.get(i)).name(direcorNameList.get(i)).build());
+            }
+            Integer filmId = directorBatchDto.filmId();
+            filmDirectorMap.put(filmId, directorList);
+        });
+        return filmDirectorMap;
     }
 
     public void linkDirectorToFilm(Integer filmId, List<Integer> directorIds, boolean clearExisting) {
