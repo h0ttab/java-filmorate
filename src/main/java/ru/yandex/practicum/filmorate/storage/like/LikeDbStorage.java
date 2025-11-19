@@ -62,10 +62,11 @@ public class LikeDbStorage implements LikeStorage {
     }
 
     @Builder
-    public record LikeBatchDto(Integer filmId, String likeList){}
+    public record LikeBatchDto(Integer filmId, String likeList) {
+    }
 
     @Component
-    private static class LikeBatchRowMapper implements RowMapper<LikeBatchDto>{
+    private static class LikeBatchRowMapper implements RowMapper<LikeBatchDto> {
         @Override
         public LikeBatchDto mapRow(ResultSet rs, int rowNum) throws SQLException {
             return LikeBatchDto.builder()

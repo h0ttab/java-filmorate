@@ -2,9 +2,11 @@ package ru.yandex.practicum.filmorate.storage.genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.*;
@@ -50,6 +52,16 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
+    public List<Genre> findByIdList(List<Integer> genreIdList) {
+        SqlParameterSource parameters = new MapSqlParameterSource("ids", genreIdList);
+        String query = """
+                SELECT * FROM genre
+                WHERE id IN (:ids)
+                """;
+        return namedParameterJdbcTemplate.query(query, parameters, mapper);
+    }
+
+    @Override
     public List<GenreBatchDto> findByFilmIdList(List<Integer> filmIdList) {
         SqlParameterSource parameters = new MapSqlParameterSource("filmIds", filmIdList);
         String query = """
@@ -64,16 +76,6 @@ public class GenreDbStorage implements GenreStorage {
                     ORDER BY fg.film_id;
                 """;
         return namedParameterJdbcTemplate.query(query, parameters, batchGenreMapper);
-    }
-
-    @Override
-    public List<Genre> findByIdList(List<Integer> genreIdList) {
-        SqlParameterSource parameters = new MapSqlParameterSource("ids", genreIdList);
-        String query = """
-                SELECT * FROM genre
-                WHERE id IN (:ids)
-                """;
-        return namedParameterJdbcTemplate.query(query, parameters, mapper);
     }
 
     @Override
@@ -116,5 +118,6 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Builder
-    public record GenreBatchDto(Integer filmId, String genresListConcat, String genresIdConcat) {}
+    public record GenreBatchDto(Integer filmId, String genresListConcat, String genresIdConcat) {
+    }
 }

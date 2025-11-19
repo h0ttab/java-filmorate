@@ -2,7 +2,8 @@ package ru.yandex.practicum.filmorate.storage.mpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,16 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
+    public List<Mpa> findByIdSet(Set<Integer> idList) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("mpaIdList", idList);
+        String query = """
+                SELECT * FROM mpa
+                WHERE id in (:idList);
+                """;
+        return namedParameterJdbcTemplate.query(query, parameterSource, mapper);
+    }
+
+    @Override
     public List<MpaBatchDto> findByFilmIdList(List<Integer> filmIdList) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("filmIds", filmIdList);
         String query = """
@@ -59,16 +70,6 @@ public class MpaDbStorage implements MpaStorage {
                 WHERE f.id in (:filmIds);
                 """;
         return namedParameterJdbcTemplate.query(query, parameterSource, mpaBatchRowMapper);
-    }
-
-    @Override
-    public List<Mpa> findByIdSet(Set<Integer> idList) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("mpaIdList", idList);
-        String query = """
-                SELECT * FROM mpa
-                WHERE id in (:idList);
-                """;
-        return namedParameterJdbcTemplate.query(query, parameterSource, mapper);
     }
 
     @Component
@@ -95,5 +96,6 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Builder
-    public record MpaBatchDto(Integer filmId, Integer mpaId, String mpaName){}
+    public record MpaBatchDto(Integer filmId, Integer mpaId, String mpaName) {
+    }
 }

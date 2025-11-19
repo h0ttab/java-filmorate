@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.like;
 
 import java.util.List;
+
 import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage.LikeBatchDto;
 
 public interface LikeStorage {

@@ -76,19 +76,6 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public Director findById(Integer directorId) {
-        String query = """
-                SELECT * FROM director
-                WHERE id = ?;
-                """;
-        List<Director> result = jdbcTemplate.query(query, mapper, directorId);
-        if (result.isEmpty()) {
-            LoggedException.throwNew(ExceptionType.DIRECTOR_NOT_FOUND, getClass(), List.of(directorId));
-        }
-        return result.getFirst();
-    }
-
-    @Override
     public List<DirectorBatchDto> findByFilmIdList(List<Integer> filmIdList) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("filmIds", filmIdList);
         String query = """
@@ -103,6 +90,19 @@ public class DirectorDbStorage implements DirectorStorage {
                 ORDER BY fd.film_id;
                 """;
         return namedParameterJdbcTemplate.query(query, parameterSource, batchDirectorMapper);
+    }
+
+    @Override
+    public Director findById(Integer directorId) {
+        String query = """
+                SELECT * FROM director
+                WHERE id = ?;
+                """;
+        List<Director> result = jdbcTemplate.query(query, mapper, directorId);
+        if (result.isEmpty()) {
+            LoggedException.throwNew(ExceptionType.DIRECTOR_NOT_FOUND, getClass(), List.of(directorId));
+        }
+        return result.getFirst();
     }
 
     @Override
@@ -178,5 +178,6 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Builder
-    public record DirectorBatchDto(Integer filmId, String directorsListConcat, String directorsIdConcat){}
+    public record DirectorBatchDto(Integer filmId, String directorsListConcat, String directorsIdConcat) {
+    }
 }
