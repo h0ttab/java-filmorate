@@ -60,6 +60,18 @@ public class FilmController {
         return filmService.findTopLiked(count, genreId, year);
     }
 
+    /**
+     * Возвращает список общих с другом фильмов, отсортированных по популярности.
+     *
+     * @param userId   идентификатор пользователя, запрашивающего информацию
+     * @param friendId идентификатор пользователя, с которым сравниваем список фильмов
+     */
+    @GetMapping("/common")
+    public List<Film> findCommonFilms(@RequestParam Integer userId,
+                                      @RequestParam Integer friendId) {
+        return filmService.findCommonFilms(userId, friendId);
+    }
+
     @PostMapping
     public Film create(@Valid @NotNull @RequestBody FilmCreateDto filmCreateDto) {
         return filmService.create(filmCreateDto);
