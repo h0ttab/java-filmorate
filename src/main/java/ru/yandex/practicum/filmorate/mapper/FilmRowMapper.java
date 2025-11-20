@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
