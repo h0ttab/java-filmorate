@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,6 +92,7 @@ public class FilmService {
     public Film create(FilmCreateDto filmCreateDto) {
         Film film = filmMapper.toEntity(filmCreateDto);
         Film createdFilm = filmStorage.create(film);
+        linkAttributesToFilm(film);
         return addAttributes(createdFilm);
     }
 
@@ -107,6 +109,7 @@ public class FilmService {
 
         filmUpdate = (Film) dtoHelper.transferFields(filmOriginal, filmUpdate);
         Film updatedFilm = filmStorage.update(filmUpdate);
+        linkAttributesToFilm(filmUpdate);
         return addAttributes(updatedFilm);
     }
 
@@ -164,6 +167,34 @@ public class FilmService {
         List<Integer> likes = likeService.getLikesByFilmId(filmId);
 
         film.getLikes().addAll(likes);
-        return film.toBuilder().directors(directors).mpa(mpa).genres(genres).build();
+        film.setGenres(genres);
+        film.setDirectors(directors);
+        film.setMpa(mpa);
+        return film;
+    }
+
+    private void linkAttributesToFilm(Film film) {
+        if (film.getDirectors() != null) {
+            List<Integer> directors = film.getDirectors().stream()
+                    .mapToInt(Director::getId)
+                    .boxed()
+                    .toList();
+            directorService.linkDirectorToFilm(film.getId(), directors, true);
+        }
+
+        if (film.getGenres() != null) {
+            Set<Integer> genreIdSet = extractGenreIdSet(film);
+            genreService.linkGenresToFilm(film.getId(), genreIdSet, true);
+        }
+        List<Integer> likes = likeService.getLikesByFilmId(film.getId());
+        System.out.println();
+        film.getLikes().addAll(likes);
+    }
+
+    private Set<Integer> extractGenreIdSet(Film film) {
+        return film.getGenres().stream()
+                .mapToInt(Genre::getId)
+                .boxed()
+                .collect(Collectors.toSet());
     }
 }
