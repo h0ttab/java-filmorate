@@ -187,7 +187,6 @@ public class FilmService {
             genreService.linkGenresToFilm(film.getId(), genreIdSet, true);
         }
         List<Integer> likes = likeService.getLikesByFilmId(film.getId());
-        System.out.println();
         film.getLikes().addAll(likes);
     }
 

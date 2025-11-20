@@ -54,7 +54,7 @@ public class MpaDbStorage implements MpaStorage {
         SqlParameterSource parameterSource = new MapSqlParameterSource("mpaIdList", idList);
         String query = """
                 SELECT * FROM mpa
-                WHERE id in (:idList);
+                WHERE id in (:mpaIdList);
                 """;
         return namedParameterJdbcTemplate.query(query, parameterSource, mapper);
     }
