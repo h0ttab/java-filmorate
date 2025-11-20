@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,12 +13,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
-import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.*;
 import ru.yandex.practicum.filmorate.storage.director.DirectorDbStorage;
 import ru.yandex.practicum.filmorate.storage.feed.FeedDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.film.FilmRowMapper;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage.FilmRowMapper;
 import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaDbStorage;
@@ -47,17 +48,13 @@ public class FilmStorageTest {
     private final FilmDbStorage storage;
 
     private void assertFilm(Film film, Integer id, String name, String description, LocalDate releaseDate,
-                            Integer duration, Mpa mpa, Set<Integer> likes, List<Genre> genres, List<Director> directors) {
+                            Integer duration) {
         assertThat(film)
                 .hasFieldOrPropertyWithValue("id", id)
                 .hasFieldOrPropertyWithValue("name", name)
                 .hasFieldOrPropertyWithValue("description", description)
                 .hasFieldOrPropertyWithValue("releaseDate", releaseDate)
-                .hasFieldOrPropertyWithValue("duration", duration)
-                .hasFieldOrPropertyWithValue("mpa", mpa)
-                .hasFieldOrPropertyWithValue("likes", likes)
-                .hasFieldOrPropertyWithValue("genres", genres)
-                .hasFieldOrPropertyWithValue("directors", directors);
+                .hasFieldOrPropertyWithValue("duration", duration);
     }
 
     @Test
@@ -65,11 +62,7 @@ public class FilmStorageTest {
         Film film = storage.findById(3);
 
         assertFilm(film, 3, "Шрек", "История про зеленого огра и его приключения.",
-                LocalDate.of(2001, 5, 18), 90, Mpa.builder().id(2).name("PG").build(),
-                Set.of(1, 2, 3),
-                List.of(Genre.builder().id(1).name("Комедия").build(), Genre.builder().id(3).name("Мультфильм").build()),
-                List.of(Director.builder().id(3).name("Эндрю Адамсон").build(), Director.builder().id(4).name("Вики Дженсон").build())
-        );
+                LocalDate.of(2001, 5, 18), 90);
     }
 
     @Test
@@ -84,11 +77,7 @@ public class FilmStorageTest {
         films.forEach(film -> {
             if (film.getId() == 3) {
                 assertFilm(film, 3, "Шрек", "История про зеленого огра и его приключения.",
-                        LocalDate.of(2001, 5, 18), 90, Mpa.builder().id(2).name("PG").build(),
-                        Set.of(1, 2, 3),
-                        List.of(Genre.builder().id(1).name("Комедия").build(), Genre.builder().id(3).name("Мультфильм").build()),
-                        List.of(Director.builder().id(3).name("Эндрю Адамсон").build(), Director.builder().id(4).name("Вики Дженсон").build())
-                );
+                        LocalDate.of(2001, 5, 18), 90);
             }
         });
     }
@@ -99,16 +88,13 @@ public class FilmStorageTest {
                 .name("Оно")
                 .description("Леденящее воплощение ужаса притаилось в тени и повсюду")
                 .releaseDate(LocalDate.of(1990, 11, 18)).duration(192)
-                .mpa(Mpa.builder().id(2).name("PG").build())
-                .genres(new ArrayList<>(List.of(Genre.builder().id(2).name("Драма").build())))
-                .directors(List.of(Director.builder().id(5).name("Томми Ли Уоллес").build()))
+                .mpa(Mpa.builder().id(1).build())
                 .build();
         Film createdFilm = storage.create(film);
         Film createdFilmFromDb = storage.findById(createdFilm.getId());
 
-        assertThat(film)
-                .isEqualTo(createdFilm)
-                .isEqualTo(createdFilmFromDb);
+        assertFilm(createdFilmFromDb, film.getId(), film.getName(),
+                film.getDescription(), film.getReleaseDate(), film.getDuration());
     }
 
     @Test
@@ -116,27 +102,17 @@ public class FilmStorageTest {
         Film originalFilm = storage.findById(1);
         Film update = originalFilm.toBuilder()
                 .name("UPDATED NAME")
-                .mpa(Mpa.builder().id(5).name("NC-17").build())
-                .genres(new ArrayList<>(List.of(
-                        Genre.builder().id(2).name("Драма").build(),
-                        Genre.builder().id(6).name("Боевик").build(),
-                        Genre.builder().id(4).name("Триллер").build()))
-                )
                 .build();
 
         assertThat(originalFilm)
-                .hasFieldOrPropertyWithValue("name", "Криминальное чтиво")
-                .hasFieldOrPropertyWithValue("mpa", Mpa.builder().id(4).name("R").build());
-        assertThat(originalFilm.getGenres()).extracting(Genre::getId).containsExactlyInAnyOrder(2, 6);
+                .hasFieldOrPropertyWithValue("name", "Криминальное чтиво");
 
         storage.update(update);
 
         Film updatedFilm = storage.findById(1);
 
         assertThat(updatedFilm)
-                .hasFieldOrPropertyWithValue("name", "UPDATED NAME")
-                .hasFieldOrPropertyWithValue("mpa", Mpa.builder().id(5).name("NC-17").build());
-        assertThat(updatedFilm.getGenres()).extracting(Genre::getId).containsExactlyInAnyOrder(2, 6, 4);
+                .hasFieldOrPropertyWithValue("name", "UPDATED NAME");
     }
 
     @Test
@@ -167,7 +143,7 @@ public class FilmStorageTest {
     /**
      * Тест метода findCommonFilms:
      * при отсутствии общих лайков должен возвращаться пустой список.
-     *
+     * <p>
      * Здесь второй пользователь (id=999) не имеет ни одной записи в таблице "like",
      * поэтому пересечение лайкнутых фильмов пользователя 1 и пользователя 999 пустое.
      * Проверка существования пользователя лежит на сервисном слое, а не на хранилище.

@@ -183,7 +183,6 @@ class FilmServiceTest {
     void findTopLikedWithGenreFilter_shouldReturnOnlyFilmsOfSpecifiedGenre() {
         // Фильтруем по жанру "Комедия" (ID = 1)
         List<Film> comedyFilms = filmService.findTopLiked(10, 1, null);
-
         // Проверяем, что наши тестовые комедии присутствуют в результатах
         assertThat(comedyFilms).extracting(Film::getId)
                 .contains(comedyFilm2020.getId(), comedyFilm2021.getId());
@@ -363,7 +362,7 @@ class FilmServiceTest {
      * Тест метода findCommonFilms:
      * оба пользователя существуют, но у одного из них нет лайков,
      * поэтому общие фильмы отсутствуют и должен вернуться пустой список.
-     *
+     * <p>
      * В setUp() у нас 5 пользователей, лайки раздаются только первым четырём,
      * пятый пользователь (testUsers.get(4)) не ставит лайков ни одному фильму.
      */
