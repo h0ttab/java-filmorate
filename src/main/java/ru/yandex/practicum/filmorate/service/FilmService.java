@@ -94,13 +94,13 @@ public class FilmService {
 
     public void addLike(Integer filmId, Integer userId) {
         validators.validateFilmExists(filmId, getClass());
-        validators.validateUserExits(userId, getClass());
+        validators.validateUserExists(userId, getClass());
         likeService.addLike(filmId, userId);
     }
 
     public void removeLike(Integer filmId, Integer userId) {
         validators.validateFilmExists(filmId, getClass());
-        validators.validateUserExits(userId, getClass());
+        validators.validateUserExists(userId, getClass());
         likeService.removeLike(filmId, userId);
     }
 

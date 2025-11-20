@@ -55,7 +55,7 @@ public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implement
 
     @Override
     public List<User> getFriends(Integer userId) {
-        validators.validateUserExits(userId, getClass());
+        validators.validateUserExists(userId, getClass());
         return mapEntityStorage.get(userId).getFriends().keySet().stream()
                 .map(mapEntityStorage::get).toList();
     }

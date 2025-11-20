@@ -63,13 +63,13 @@ public class ReviewService {
 
     public void addLike(Integer reviewId, Integer userId) {
         validators.validateReviewExists(reviewId, getClass());
-        validators.validateUserExits(userId, getClass());
+        validators.validateUserExists(userId, getClass());
         reviewStorage.addUseful(reviewId, userId);
     }
 
     public void addDislike(Integer reviewId, Integer userId) {
         validators.validateReviewExists(reviewId, getClass());
-        validators.validateUserExits(userId, getClass());
+        validators.validateUserExists(userId, getClass());
         reviewStorage.addUseless(reviewId, userId);
     }
 

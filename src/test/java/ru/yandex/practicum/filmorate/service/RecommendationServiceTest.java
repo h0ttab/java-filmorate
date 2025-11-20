@@ -69,7 +69,7 @@ public class RecommendationServiceTest {
         List<Film> expectedRecommendations = List.of(film1, film2);
 
         // Настраиваем поведение моков
-        doNothing().when(validators).validateUserExits(userId, RecommendationService.class);
+        doNothing().when(validators).validateUserExists(userId, RecommendationService.class);
         when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
 
         // Вызываем тестируемый метод
@@ -80,7 +80,7 @@ public class RecommendationServiceTest {
         assertEquals(expectedRecommendations, actualRecommendations, "Списки рекомендаций должны совпадать");
 
         // Проверяем, что методы моков были вызваны с правильными параметрами
-        verify(validators).validateUserExits(userId, RecommendationService.class);
+        verify(validators).validateUserExists(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
     }
 
@@ -94,7 +94,7 @@ public class RecommendationServiceTest {
         List<Film> expectedRecommendations = List.of();
 
         // Настраиваем поведение моков
-        doNothing().when(validators).validateUserExits(userId, RecommendationService.class);
+        doNothing().when(validators).validateUserExists(userId, RecommendationService.class);
         when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
 
         // Вызываем тестируемый метод
@@ -104,7 +104,7 @@ public class RecommendationServiceTest {
         assertEquals(0, actualRecommendations.size(), "Размер списка рекомендаций должен быть 0");
 
         // Проверяем, что методы моков были вызваны с правильными параметрами
-        verify(validators).validateUserExits(userId, RecommendationService.class);
+        verify(validators).validateUserExists(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
     }
 }

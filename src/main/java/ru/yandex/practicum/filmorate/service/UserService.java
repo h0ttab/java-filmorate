@@ -68,7 +68,7 @@ public class UserService {
     }
 
     public User update(UserUpdateDto userUpdateDto) {
-        validators.validateUserExits(userUpdateDto.getId(), getClass());
+        validators.validateUserExists(userUpdateDto.getId(), getClass());
         validators.validateLogin(userUpdateDto.getLogin(), getClass());
 
         User userUpdate = mapper.toEntity(userUpdateDto);

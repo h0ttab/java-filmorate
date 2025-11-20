@@ -33,7 +33,7 @@ public class RecommendationService {
      */
     public List<Film> getRecommendations(Integer userId) {
         // Проверяем, что пользователь существует
-        validators.validateUserExits(userId, getClass());
+        validators.validateUserExists(userId, getClass());
 
         log.info("Запрос на получение рекомендаций для пользователя с id {}", userId);
         List<Film> recommendations = recommendationStorage.getRecommendations(userId);
