@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,7 +22,9 @@ import ru.yandex.practicum.filmorate.model.Director;
 public class DirectorDbStorage implements DirectorStorage {
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final DirectorRowMapper mapper;
+    private final RowMapper<Director> mapper;
+    private final RowMapper<DirectorBatchDto> batchDirectorMapper;
+
 
     @Override
     public Director create(Director director) {
@@ -70,6 +73,23 @@ public class DirectorDbStorage implements DirectorStorage {
                 """;
         SqlParameterSource parameters = new MapSqlParameterSource("ids", directorIdList);
         return namedParameterJdbcTemplate.query(query, parameters, mapper);
+    }
+
+    @Override
+    public List<DirectorBatchDto> findByFilmIdList(List<Integer> filmIdList) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("filmIds", filmIdList);
+        String query = """
+                SELECT
+                    fd.film_id,
+                    GROUP_CONCAT(d.name SEPARATOR ',') AS directors,
+                    GROUP_CONCAT(d.id SEPARATOR ',') AS directors_id
+                FROM film_director fd
+                JOIN director d ON d.id = fd.director_id
+                WHERE fd.film_id IN (:filmIds)
+                GROUP BY fd.film_id
+                ORDER BY fd.film_id;
+                """;
+        return namedParameterJdbcTemplate.query(query, parameterSource, batchDirectorMapper);
     }
 
     @Override
@@ -143,5 +163,21 @@ public class DirectorDbStorage implements DirectorStorage {
         public Director mapRow(ResultSet rs, int rowNum) throws SQLException {
             return Director.builder().id(rs.getInt("id")).name(rs.getString("name")).build();
         }
+    }
+
+    @Component
+    private static class BatchGenreRowMapper implements RowMapper<DirectorBatchDto> {
+        @Override
+        public DirectorBatchDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return DirectorBatchDto.builder()
+                    .filmId(rs.getInt("film_id"))
+                    .directorsListConcat(rs.getString("directors"))
+                    .directorsIdConcat(rs.getString("directors_id"))
+                    .build();
+        }
+    }
+
+    @Builder
+    public record DirectorBatchDto(Integer filmId, String directorsListConcat, String directorsIdConcat) {
     }
 }
