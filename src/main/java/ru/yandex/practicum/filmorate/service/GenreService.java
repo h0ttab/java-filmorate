@@ -33,6 +33,9 @@ public class GenreService {
     }
 
     public List<Genre> findByIdList(List<Integer> idList) {
+        if (idList.isEmpty()) {
+            return List.of();
+        }
         List<Genre> genreList = genreStorage.findByIdList(idList);
         if (genreList.isEmpty()) {
             LoggedException.throwNew(ExceptionType.GENRE_NOT_FOUND, getClass(), idList);
