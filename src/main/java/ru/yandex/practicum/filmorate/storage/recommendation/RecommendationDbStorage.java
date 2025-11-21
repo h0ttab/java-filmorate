@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.storage.recommendation;
 
-import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecommendationDbStorage implements RecommendationStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final FilmRowMapper filmRowMapper;
+    private final FilmDbStorage.FilmRowMapper filmRowMapper;
 
     /**
      * Получает список идентификаторов фильмов, которым поставил лайк указанный пользователь.

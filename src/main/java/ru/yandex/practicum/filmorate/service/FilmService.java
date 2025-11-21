@@ -83,8 +83,8 @@ public class FilmService {
     }
 
     public List<Film> findCommonFilms(Integer userId, Integer friendId) {
-        validators.validateUserExits(userId, getClass());
-        validators.validateUserExits(friendId, getClass());
+        validators.validateUserExists(userId, getClass());
+        validators.validateUserExists(friendId, getClass());
         List<Film> commonFilms = filmStorage.findCommonFilms(userId, friendId);
         return addAttributes(commonFilms);
     }
