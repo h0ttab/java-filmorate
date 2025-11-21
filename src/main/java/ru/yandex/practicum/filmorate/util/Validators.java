@@ -157,7 +157,7 @@ public class Validators {
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(query, Boolean.class, userId));
     }
 
-    public void validateUserExits(Integer userId, Class<?> clazz) {
+    public void validateUserExists(Integer userId, Class<?> clazz) {
         if (!isValidUser(userId)) {
             LoggedException.throwNew(ExceptionType.USER_NOT_FOUND, clazz, List.of(userId));
         }

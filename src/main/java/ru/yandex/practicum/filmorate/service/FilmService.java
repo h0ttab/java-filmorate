@@ -83,8 +83,8 @@ public class FilmService {
     }
 
     public List<Film> findCommonFilms(Integer userId, Integer friendId) {
-        validators.validateUserExits(userId, getClass());
-        validators.validateUserExits(friendId, getClass());
+        validators.validateUserExists(userId, getClass());
+        validators.validateUserExists(friendId, getClass());
         List<Film> commonFilms = filmStorage.findCommonFilms(userId, friendId);
         return addAttributes(commonFilms);
     }
@@ -115,13 +115,13 @@ public class FilmService {
 
     public void addLike(Integer filmId, Integer userId) {
         validators.validateFilmExists(filmId, getClass());
-        validators.validateUserExits(userId, getClass());
+        validators.validateUserExists(userId, getClass());
         likeService.addLike(filmId, userId);
     }
 
     public void removeLike(Integer filmId, Integer userId) {
         validators.validateFilmExists(filmId, getClass());
-        validators.validateUserExits(userId, getClass());
+        validators.validateUserExists(userId, getClass());
         likeService.removeLike(filmId, userId);
     }
 

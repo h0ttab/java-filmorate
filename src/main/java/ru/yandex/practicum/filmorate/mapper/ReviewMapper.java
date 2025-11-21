@@ -15,7 +15,7 @@ public class ReviewMapper {
     private final Validators validators;
 
     public Review toEntity(ReviewCreateDto dto) {
-        validators.validateUserExits(dto.getUserId(), getClass());
+        validators.validateUserExists(dto.getUserId(), getClass());
         validators.validateFilmExists(dto.getFilmId(), getClass());
         return Review.builder()
                 .content(dto.getContent())
