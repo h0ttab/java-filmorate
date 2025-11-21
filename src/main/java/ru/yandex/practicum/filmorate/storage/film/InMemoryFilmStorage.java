@@ -80,4 +80,12 @@ public class InMemoryFilmStorage extends AbstractInMemoryStorage<Film> implement
     public List<Film> findByDirector(Integer directorId, SortOrder order) {
         return List.of();
     }
+
+    @Override
+    public List<Film> findCommonFilms(Integer userId, Integer friendId) {
+        return mapEntityStorage.values().stream()
+                .filter(film -> film.getLikes().contains(userId) && film.getLikes().contains(friendId))
+                .sorted(Comparator.<Film, Integer>comparing(film -> film.getLikes().size()).reversed())
+                .toList();
+    }
 }

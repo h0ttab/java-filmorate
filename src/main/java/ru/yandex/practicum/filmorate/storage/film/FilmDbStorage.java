@@ -1,15 +1,15 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
+import java.sql.*;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -17,6 +17,7 @@ import ru.yandex.practicum.filmorate.exception.ExceptionType;
 import ru.yandex.practicum.filmorate.exception.LoggedException;
 import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
@@ -71,39 +72,55 @@ public class FilmDbStorage implements FilmStorage {
 
         film.setId(keyHolder.getKey().intValue());
         log.info("Добавлен новый фильм: {}", film);
-        List<Integer> directors = film.getDirectors().stream().mapToInt(Director::getId).boxed().toList();
-        directorService.linkDirectorToFilm(film.getId(), directors, false);
-        genreService.linkGenresToFilm(film.getId(), extractGenreIdSet(film), false);
         return film;
     }
 
     @Override
     public Film update(Film film) {
-        String queryFilmUpdate = """
-                    UPDATE film
+
+        String queryFilmUpdateWithMpa = """
+                    UPDATE film f
                     SET name = ?,
                         description = ?,
                         release_date = ?,
                         duration = ?,
                         mpa_id = ?
-                    WHERE film.id = ?;
+                    WHERE f.id = ?;
                 """;
-        int updatedFilmRows = jdbcTemplate.update(
-                queryFilmUpdate,
-                film.getName(),
-                film.getDescription(),
-                film.getReleaseDate(),
-                film.getDuration(),
-                film.getMpa().getId(),
-                film.getId()
-        );
+        String queryFilmUpdateNoMpa = """
+                UPDATE film f
+                SET name = ?,
+                    description = ?,
+                    release_date = ?,
+                    duration = ?
+                WHERE f.id = ?;
+                """;
+        int updatedFilmRows;
+
+        if (film.getMpa() == null) {
+            updatedFilmRows = jdbcTemplate.update(
+                    queryFilmUpdateNoMpa,
+                    film.getName(),
+                    film.getDescription(),
+                    film.getReleaseDate(),
+                    film.getDuration(),
+                    film.getId()
+            );
+        } else {
+            updatedFilmRows = jdbcTemplate.update(
+                    queryFilmUpdateWithMpa,
+                    film.getName(),
+                    film.getDescription(),
+                    film.getReleaseDate(),
+                    film.getDuration(),
+                    film.getMpa().getId(),
+                    film.getId()
+            );
+        }
         if (updatedFilmRows == 0) {
             LoggedException.throwNew(ExceptionType.FILM_NOT_FOUND, getClass(), List.of(film.getId()));
         }
         log.info("Обновлён фильм id {}. Новое значение: {}", film.getId(), film);
-        List<Integer> directors = film.getDirectors().stream().mapToInt(Director::getId).boxed().toList();
-        genreService.linkGenresToFilm(film.getId(), extractGenreIdSet(film), true);
-        directorService.linkDirectorToFilm(film.getId(), directors, true);
         return film;
     }
 
@@ -218,10 +235,33 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(query, mapper, directorId);
     }
 
-    private Set<Integer> extractGenreIdSet(Film film) {
-        return film.getGenres().stream()
-                .mapToInt(Genre::getId)
-                .boxed()
-                .collect(Collectors.toSet());
+    @Override
+    public List<Film> findCommonFilms(Integer userId, Integer friendId) {
+        String query = """
+                SELECT f.*
+                FROM film f
+                JOIN "like" l_user ON f.id = l_user.film_id AND l_user.user_id = ?
+                JOIN "like" l_friend ON f.id = l_friend.film_id AND l_friend.user_id = ?
+                LEFT JOIN "like" l_all ON f.id = l_all.film_id
+                GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.mpa_id
+                ORDER BY COUNT(l_all.user_id) DESC, f.id;
+                """;
+
+        return jdbcTemplate.query(query, mapper, userId, friendId);
+    }
+
+    @Component
+    @RequiredArgsConstructor
+    public static class FilmRowMapper implements RowMapper<Film> {
+        @Override
+        public Film mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+            return Film.builder()
+                    .id(resultSet.getInt("ID"))
+                    .name(resultSet.getString("NAME"))
+                    .description(resultSet.getString("DESCRIPTION"))
+                    .releaseDate(resultSet.getDate("RELEASE_DATE").toLocalDate())
+                    .duration(resultSet.getInt("DURATION"))
+                    .build();
+        }
     }
 }

@@ -37,7 +37,6 @@ import static org.assertj.core.api.Assertions.assertThat;
         GenreService.class,
         GenreDbStorage.class,
         FilmMapper.class,
-        FilmRowMapper.class,
         FeedService.class,
         FeedDbStorage.class,
         LikeDbStorage.class,

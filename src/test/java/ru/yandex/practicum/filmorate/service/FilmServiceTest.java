@@ -183,7 +183,6 @@ class FilmServiceTest {
     void findTopLikedWithGenreFilter_shouldReturnOnlyFilmsOfSpecifiedGenre() {
         // Фильтруем по жанру "Комедия" (ID = 1)
         List<Film> comedyFilms = filmService.findTopLiked(10, 1, null);
-
         // Проверяем, что наши тестовые комедии присутствуют в результатах
         assertThat(comedyFilms).extracting(Film::getId)
                 .contains(comedyFilm2020.getId(), comedyFilm2021.getId());
@@ -319,5 +318,75 @@ class FilmServiceTest {
 
         // Проверяем, что возвращается пустой список
         assertThat(films2022).isEmpty();
+    }
+
+    /**
+     * Тест метода findCommonFilms:
+     * должны возвращаться только общие для двух пользователей фильмы,
+     * отсортированные по популярности (количеству лайков).
+     */
+    @Test
+    void findCommonFilms_shouldReturnIntersectionSortedByPopularity() {
+        Integer userId = testUsers.get(0).getId();   // первый пользователь
+        Integer friendId = testUsers.get(1).getId(); // второй пользователь
+
+        List<Film> commonFilms = filmService.findCommonFilms(userId, friendId);
+
+        // Пользователи 1 и 2 ставят лайки фильмам с likesCount >= 2,
+        // т.е. общие для них фильмы: dramaFilm2020 (4 лайка),
+        // comedyFilm2020 (3 лайка), dramaFilm2021 (2 лайка).
+        assertThat(commonFilms)
+                .extracting(Film::getId)
+                .containsExactly(
+                        dramaFilm2020.getId(),
+                        comedyFilm2020.getId(),
+                        dramaFilm2021.getId()
+                );
+    }
+
+    /**
+     * Тест метода findCommonFilms с несуществующим пользователем:
+     * ожидаем NotFoundException от валидатора.
+     */
+    @Test
+    void findCommonFilms_withNonExistentUser_shouldThrowNotFound() {
+        Integer existingUserId = testUsers.get(0).getId();
+        Integer nonExistentUserId = 9999;
+
+        assertThatThrownBy(() -> filmService.findCommonFilms(nonExistentUserId, existingUserId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Пользователь id=" + nonExistentUserId + " не найден");
+    }
+
+    /**
+     * Тест метода findCommonFilms:
+     * оба пользователя существуют, но у одного из них нет лайков,
+     * поэтому общие фильмы отсутствуют и должен вернуться пустой список.
+     * <p>
+     * В setUp() у нас 5 пользователей, лайки раздаются только первым четырём,
+     * пятый пользователь (testUsers.get(4)) не ставит лайков ни одному фильму.
+     */
+    @Test
+    void findCommonFilms_whenUsersHaveNoCommonLikes_shouldReturnEmptyList() {
+        Integer userIdWithLikes = testUsers.get(0).getId();   // ставил лайки
+        Integer userIdWithoutLikes = testUsers.get(4).getId(); // не ставил лайков
+
+        List<Film> commonFilms = filmService.findCommonFilms(userIdWithLikes, userIdWithoutLikes);
+
+        assertThat(commonFilms).isEmpty();
+    }
+
+    /**
+     * Тест метода findCommonFilms с несуществующим другом:
+     * ожидаем NotFoundException от валидатора для friendId.
+     */
+    @Test
+    void findCommonFilms_withNonExistentFriend_shouldThrowNotFound() {
+        Integer existingUserId = testUsers.get(0).getId();
+        Integer nonExistentFriendId = 9999;
+
+        assertThatThrownBy(() -> filmService.findCommonFilms(existingUserId, nonExistentFriendId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Пользователь id=" + nonExistentFriendId + " не найден");
     }
 }

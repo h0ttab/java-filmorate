@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ExceptionType;
 import ru.yandex.practicum.filmorate.exception.LoggedException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.model.dto.film.FilmCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.film.FilmUpdateDto;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -24,15 +24,20 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final FilmMapper filmMapper;
     private final LikeService likeService;
+    private final GenreService genreService;
+    private final DirectorService directorService;
+    private final MpaService mpaService;
     private final DtoHelper dtoHelper;
     private final Validators validators;
 
     public Collection<Film> findAll() {
-        return filmStorage.findAll();
+        List<Film> films = filmStorage.findAll();
+        return addAttributes(films);
     }
 
     public Film findById(Integer filmId) {
-        return filmStorage.findById(filmId);
+        Film film = filmStorage.findById(filmId);
+        return addAttributes(film);
     }
 
     /**
@@ -44,6 +49,7 @@ public class FilmService {
      * @return список фильмов, отсортированных по количеству лайков (по убыванию)
      */
     public List<Film> findTopLiked(int count, Integer genreId, Integer year) {
+        List<Film> films;
         // Проверка существования жанра, если он указан
         if (genreId != null) {
             validators.validateGenreExists(genreId, getClass());
@@ -51,37 +57,50 @@ public class FilmService {
 
         if (genreId == null && year == null) {
             // Если не указаны дополнительные параметры, используем существующий метод
-            return filmStorage.findTopLiked(count);
+            films = filmStorage.findTopLiked(count);
+            return addAttributes(films);
         }
 
-        return filmStorage.findTopLiked(count, genreId, year);
+        films = filmStorage.findTopLiked(count, genreId, year);
+        return addAttributes(films);
     }
 
     public List<Film> findTopLiked(int count) {
-        return filmStorage.findTopLiked(count);
+        List<Film> films = filmStorage.findTopLiked(count);
+        return addAttributes(films);
     }
 
     public List<Film> findByDirector(Integer directorId, String sortOrder) {
         try {
             SortOrder order = SortOrder.valueOf(sortOrder.toUpperCase());
             validators.validateDirectorExists(directorId, getClass());
-            return filmStorage.findByDirector(directorId, order);
+            List<Film> films = filmStorage.findByDirector(directorId, order);
+            return addAttributes(films);
         } catch (IllegalArgumentException e) {
             LoggedException.throwNew(ExceptionType.INVALID_SORT_ORDER, getClass(), List.of());
         }
         return List.of();
     }
 
+    public List<Film> findCommonFilms(Integer userId, Integer friendId) {
+        validators.validateUserExits(userId, getClass());
+        validators.validateUserExits(friendId, getClass());
+        List<Film> commonFilms = filmStorage.findCommonFilms(userId, friendId);
+        return addAttributes(commonFilms);
+    }
+
     public Film create(FilmCreateDto filmCreateDto) {
         Film film = filmMapper.toEntity(filmCreateDto);
-        return filmStorage.create(film);
+        Film createdFilm = filmStorage.create(film);
+        linkAttributesToFilm(film);
+        return addAttributes(createdFilm);
     }
 
     public Film update(FilmUpdateDto filmUpdateDto) {
         validators.validateFilmExists(filmUpdateDto.getId(), getClass());
 
         Film filmUpdate = filmMapper.toEntity(filmUpdateDto);
-        Film filmOriginal = filmStorage.findById(filmUpdate.getId());
+        Film filmOriginal = findById(filmUpdate.getId());
 
         filmUpdate.getDirectors()
                 .forEach(director -> validators.validateDirectorExists(director.getId(), getClass()));
@@ -89,7 +108,9 @@ public class FilmService {
         validators.validateFilmDescription(filmUpdateDto.getDescription(), filmUpdateDto.getId(), getClass());
 
         filmUpdate = (Film) dtoHelper.transferFields(filmOriginal, filmUpdate);
-        return filmStorage.update(filmUpdate);
+        Film updatedFilm = filmStorage.update(filmUpdate);
+        linkAttributesToFilm(filmUpdate);
+        return addAttributes(updatedFilm);
     }
 
     public void addLike(Integer filmId, Integer userId) {
@@ -106,5 +127,73 @@ public class FilmService {
 
     public void delete(Integer filmId) {
         filmStorage.delete(filmId);
+    }
+
+    List<Film> addAttributes(List<Film> films) {
+        Map<Integer, Mpa> filmMpaMap;
+        Map<Integer, List<Genre>> filmGenreMap;
+        Map<Integer, List<Director>> filmDirectorMap;
+        Map<Integer, List<Integer>> filmLikeMap;
+
+        List<Integer> filmIdList = films.stream().map(Film::getId).toList();
+
+        filmMpaMap = mpaService.findByFilmIdList(filmIdList);
+        filmGenreMap = genreService.findByFilmIdList(filmIdList);
+        filmDirectorMap = directorService.findByFilmIdList(filmIdList);
+        filmLikeMap = likeService.getLikesByFilmIdList(filmIdList);
+
+        films.forEach(film -> {
+            Integer filmId = film.getId();
+            Mpa filmMpa = filmMpaMap.get(filmId);
+            List<Genre> filmGenres = filmGenreMap.containsKey(filmId) ? filmGenreMap.get(filmId) : List.of();
+            List<Director> filmDirectors = filmDirectorMap.containsKey(filmId) ? filmDirectorMap.get(filmId) : List.of();
+            List<Integer> filmLikes = filmLikeMap.containsKey(filmId) ? filmLikeMap.get(filmId) : List.of();
+
+            film.setMpa(filmMpa);
+            film.setDirectors(filmDirectors);
+            film.setGenres(filmGenres);
+            film.getLikes().addAll(filmLikes);
+        });
+
+        return films;
+    }
+
+    private Film addAttributes(Film film) {
+        Integer filmId = film.getId();
+
+        Mpa mpa = mpaService.findByFilmId(filmId);
+        List<Genre> genres = genreService.findByFilmId(filmId);
+        List<Director> directors = directorService.findByFilmId(filmId);
+        List<Integer> likes = likeService.getLikesByFilmId(filmId);
+
+        film.getLikes().addAll(likes);
+        film.setGenres(genres);
+        film.setDirectors(directors);
+        film.setMpa(mpa);
+        return film;
+    }
+
+    private void linkAttributesToFilm(Film film) {
+        if (film.getDirectors() != null) {
+            List<Integer> directors = film.getDirectors().stream()
+                    .mapToInt(Director::getId)
+                    .boxed()
+                    .toList();
+            directorService.linkDirectorToFilm(film.getId(), directors, true);
+        }
+
+        if (film.getGenres() != null) {
+            Set<Integer> genreIdSet = extractGenreIdSet(film);
+            genreService.linkGenresToFilm(film.getId(), genreIdSet, true);
+        }
+        List<Integer> likes = likeService.getLikesByFilmId(film.getId());
+        film.getLikes().addAll(likes);
+    }
+
+    private Set<Integer> extractGenreIdSet(Film film) {
+        return film.getGenres().stream()
+                .mapToInt(Genre::getId)
+                .boxed()
+                .collect(Collectors.toSet());
     }
 }
