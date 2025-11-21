@@ -40,9 +40,6 @@ public class RecommendationService {
         log.info("Запрос на получение рекомендаций для пользователя с id {}", userId);
         List<Film> recommendations = recommendationStorage.getRecommendations(userId);
         recommendations = filmService.addAttributes(recommendations);
-        recommendations = recommendations.stream()
-                .filter(film -> film.getLikes() == null || !film.getLikes().contains(userId))
-                .collect(Collectors.toList());
         log.info("Получены рекомендации для пользователя с id {}: {} фильмов", userId, recommendations.size());
 
         return recommendations;
