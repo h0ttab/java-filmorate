@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.storage.recommendation.RecommendationStorag
 import ru.yandex.practicum.filmorate.util.Validators;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для работы с рекомендациями фильмов.
@@ -19,6 +20,7 @@ import java.util.List;
 public class RecommendationService {
     private final RecommendationStorage recommendationStorage;
     private final Validators validators;
+    private final FilmService filmService;
 
     /**
      * Получает список рекомендованных фильмов для указанного пользователя.
@@ -37,6 +39,10 @@ public class RecommendationService {
 
         log.info("Запрос на получение рекомендаций для пользователя с id {}", userId);
         List<Film> recommendations = recommendationStorage.getRecommendations(userId);
+        recommendations = filmService.addAttributes(recommendations);
+        recommendations = recommendations.stream()
+                .filter(film -> film.getLikes() == null || !film.getLikes().contains(userId))
+                .collect(Collectors.toList());
         log.info("Получены рекомендации для пользователя с id {}: {} фильмов", userId, recommendations.size());
 
         return recommendations;
