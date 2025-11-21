@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Тесты для FilmController
  * Включает тесты для эндпоинта /films/popular с различными параметрами
  */
+@Slf4j
 @ControllerTest
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -253,16 +255,12 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        // Проверяем, что список не пустой
         assertThat(films).isNotNull().isNotEmpty();
 
         // Выводим информацию о фильмах в ответе для отладки
-        System.out.println("[DEBUG_LOG] Films in response: " + films);
-        System.out.println("[DEBUG_LOG] Expected film IDs: " +
-                dramaFilm2020.getId() + ", " +
-                comedyFilm2020.getId() + ", " +
-                dramaFilm2021.getId() + ", " +
-                comedyFilm2021.getId());
+        log.debug("Films in response: {}", films);
+        log.debug("Expected film IDs: {}, {}, {}, {}",
+                dramaFilm2020.getId(), comedyFilm2020.getId(), dramaFilm2021.getId(), comedyFilm2021.getId());
 
         // Проверяем, что в ответе есть хотя бы один фильм с жанром "Комедия" или "Драма"
         boolean containsComedyOrDrama = films.stream()
@@ -296,7 +294,7 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Comedy films in response: " + comedyFilms);
+        log.debug("Comedy films in response: {}", comedyFilms);
 
         // Проверяем, что список не пустой
         assertThat(comedyFilms).isNotNull();
@@ -328,9 +326,8 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Drama films in response: " + dramaFilms);
+        log.debug("Drama films in response: {}", dramaFilms);
 
-        // Проверяем, что список не пустой
         assertThat(dramaFilms).isNotNull();
 
         // Если список не пустой, проверяем, что все фильмы имеют жанр "Драма"
@@ -358,7 +355,6 @@ public class FilmControllerTest {
      */
     @Test
     void findTopLiked_withYearParameter_shouldReturnFilmsOfSpecifiedYear() {
-        // Проверяем фильтрацию по 2020 году
         List<Map<String, Object>> films2020 = webTestClient.get()
                 .uri("/films/popular?count=10&year=2020")
                 .exchange()
@@ -367,12 +363,9 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Films from 2020 in response: " + films2020);
-        System.out.println("[DEBUG_LOG] Expected film IDs from 2020: " +
-                dramaFilm2020.getId() + ", " +
-                comedyFilm2020.getId());
+        log.debug("Films from 2020 in response: {}", films2020);
+        log.debug("Expected film IDs from 2020: {}, {}", dramaFilm2020.getId(), comedyFilm2020.getId());
 
-        // Проверяем, что список не пустой
         assertThat(films2020).isNotNull();
 
         // Если список не пустой, проверяем, что хотя бы один из наших тестовых фильмов 2020 года присутствует
@@ -395,12 +388,9 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Films from 2021 in response: " + films2021);
-        System.out.println("[DEBUG_LOG] Expected film IDs from 2021: " +
-                dramaFilm2021.getId() + ", " +
-                comedyFilm2021.getId());
+        log.debug("Films from 2021 in response: {}", films2021);
+        log.debug("Expected film IDs from 2021: {}, {}", dramaFilm2021.getId(), comedyFilm2021.getId());
 
-        // Проверяем, что список не пустой
         assertThat(films2021).isNotNull();
 
         // Если список не пустой, проверяем, что хотя бы один из наших тестовых фильмов 2021 года присутствует
@@ -430,10 +420,9 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Comedy films from 2020 in response: " + comedyFilms2020);
-        System.out.println("[DEBUG_LOG] Expected comedy film ID from 2020: " + comedyFilm2020.getId());
+        log.debug("Comedy films from 2020 in response: {}", comedyFilms2020);
+        log.debug("Expected comedy film ID from 2020: {}", comedyFilm2020.getId());
 
-        // Проверяем, что список не пустой
         assertThat(comedyFilms2020).isNotNull();
 
         // Если список не пустой, проверяем, что комедия 2020 года присутствует в результатах
@@ -456,13 +445,11 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Drama films from 2021 in response: " + dramaFilms2021);
-        System.out.println("[DEBUG_LOG] Expected drama film ID from 2021: " + dramaFilm2021.getId());
+        log.debug("Drama films from 2021 in response: {}", dramaFilms2021);
+        log.debug("Expected drama film ID from 2021: {}", dramaFilm2021.getId());
 
-        // Проверяем, что список не пустой
         assertThat(dramaFilms2021).isNotNull();
 
-        // Если список не пустой, проверяем, что драма 2021 года присутствует в результатах
         if (!dramaFilms2021.isEmpty()) {
             boolean containsDramaFilm2021 = dramaFilms2021.stream()
                     .anyMatch(film -> {
@@ -489,30 +476,26 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Top 2 films in response: " + topTwoFilms);
+        log.debug("Top 2 films in response: {}", topTwoFilms);
 
-        // Проверяем, что список не пустой
         assertThat(topTwoFilms).isNotNull();
 
-        // Проверяем, что список содержит не более 2 фильмов
-        if (topTwoFilms != null) {
-            assertThat(topTwoFilms.size()).isLessThanOrEqualTo(2);
+        assertThat(topTwoFilms.size()).isLessThanOrEqualTo(2);
 
-            // Проверяем, что каждый фильм в списке имеет необходимые поля
-            if (!topTwoFilms.isEmpty()) {
-                boolean allFilmsHaveRequiredFields = topTwoFilms.stream()
-                        .allMatch(film ->
-                                film.containsKey("id") &&
-                                        film.containsKey("name") &&
-                                        film.containsKey("description") &&
-                                        film.containsKey("releaseDate") &&
-                                        film.containsKey("duration") &&
-                                        film.containsKey("mpa") &&
-                                        film.containsKey("genres")
-                        );
+        // Проверяем, что каждый фильм в списке имеет необходимые поля
+        if (!topTwoFilms.isEmpty()) {
+            boolean allFilmsHaveRequiredFields = topTwoFilms.stream()
+                    .allMatch(film ->
+                            film.containsKey("id") &&
+                                    film.containsKey("name") &&
+                                    film.containsKey("description") &&
+                                    film.containsKey("releaseDate") &&
+                                    film.containsKey("duration") &&
+                                    film.containsKey("mpa") &&
+                                    film.containsKey("genres")
+                    );
 
-                assertThat(allFilmsHaveRequiredFields).isTrue();
-            }
+            assertThat(allFilmsHaveRequiredFields).isTrue();
         }
     }
 
@@ -543,8 +526,6 @@ public class FilmControllerTest {
                 .expectBody(List.class)
                 .returnResult()
                 .getResponseBody();
-
-        // Проверяем, что список пустой
         assertThat(films).isNotNull().isEmpty();
     }
 }

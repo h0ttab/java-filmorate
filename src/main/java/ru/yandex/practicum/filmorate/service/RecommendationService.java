@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.service;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.recommendation.RecommendationStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
-
-import java.util.List;
 
 /**
  * Сервис для работы с рекомендациями фильмов.
@@ -26,7 +26,7 @@ public class RecommendationService {
      * 1. Находим пользователей с максимальным количеством пересечения по лайкам.
      * 2. Определяем фильмы, которые один пролайкал, а другой нет.
      * 3. Рекомендуем фильмы, которым поставил лайк пользователь с похожими вкусами,
-     *    а тот, для кого составляется рекомендация, ещё не поставил.
+     * а тот, для кого составляется рекомендация, ещё не поставил.
      *
      * @param userId идентификатор пользователя
      * @return список рекомендованных фильмов
