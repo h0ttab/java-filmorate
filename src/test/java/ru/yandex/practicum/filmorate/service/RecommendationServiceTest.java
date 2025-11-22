@@ -29,6 +29,9 @@ public class RecommendationServiceTest {
     @Mock
     private Validators validators;
 
+    @Mock
+    private FilmService filmService;   // добавили мок FilmService
+
     @InjectMocks
     private RecommendationService recommendationService;
 
@@ -66,22 +69,25 @@ public class RecommendationServiceTest {
     @Test
     void getRecommendationsTest() {
         // Подготавливаем данные
-        List<Film> expectedRecommendations = List.of(film1, film2);
+        List<Film> storageRecommendations = List.of(film1, film2);
 
         // Настраиваем поведение моков
         doNothing().when(validators).validateUserExists(userId, RecommendationService.class);
-        when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
+        when(recommendationStorage.getRecommendations(userId)).thenReturn(storageRecommendations);
+        // RecommendationService делегирует обогащение фильмов в filmService.addAttributes(...)
+        when(filmService.addAttributes(storageRecommendations)).thenReturn(storageRecommendations);
 
         // Вызываем тестируемый метод
         List<Film> actualRecommendations = recommendationService.getRecommendations(userId);
 
         // Проверяем результат
-        assertEquals(expectedRecommendations.size(), actualRecommendations.size(), "Размер списка рекомендаций должен совпадать");
-        assertEquals(expectedRecommendations, actualRecommendations, "Списки рекомендаций должны совпадать");
+        assertEquals(storageRecommendations.size(), actualRecommendations.size(), "Размер списка рекомендаций должен совпадать");
+        assertEquals(storageRecommendations, actualRecommendations, "Списки рекомендаций должны совпадать");
 
         // Проверяем, что методы моков были вызваны с правильными параметрами
         verify(validators).validateUserExists(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
+        verify(filmService).addAttributes(storageRecommendations);
     }
 
     /**
@@ -91,11 +97,12 @@ public class RecommendationServiceTest {
     @Test
     void getRecommendationsEmptyListTest() {
         // Подготавливаем данные
-        List<Film> expectedRecommendations = List.of();
+        List<Film> storageRecommendations = List.of();
 
         // Настраиваем поведение моков
         doNothing().when(validators).validateUserExists(userId, RecommendationService.class);
-        when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
+        when(recommendationStorage.getRecommendations(userId)).thenReturn(storageRecommendations);
+        when(filmService.addAttributes(storageRecommendations)).thenReturn(storageRecommendations);
 
         // Вызываем тестируемый метод
         List<Film> actualRecommendations = recommendationService.getRecommendations(userId);
@@ -106,5 +113,6 @@ public class RecommendationServiceTest {
         // Проверяем, что методы моков были вызваны с правильными параметрами
         verify(validators).validateUserExists(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
+        verify(filmService).addAttributes(storageRecommendations);
     }
 }
