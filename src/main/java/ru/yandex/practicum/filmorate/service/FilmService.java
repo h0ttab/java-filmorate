@@ -50,13 +50,12 @@ public class FilmService {
      */
     public List<Film> findTopLiked(int count, Integer genreId, Integer year) {
         List<Film> films;
-        // Проверка существования жанра, если он указан
+
         if (genreId != null) {
             validators.validateGenreExists(genreId, getClass());
         }
 
         if (genreId == null && year == null) {
-            // Если не указаны дополнительные параметры, используем существующий метод
             films = filmStorage.findTopLiked(count);
             return addAttributes(films);
         }

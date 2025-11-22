@@ -194,7 +194,6 @@ public class FilmDbStorage implements FilmStorage {
         // Добавляем параметр limit
         params.add(count);
 
-        // Выполняем запрос с параметрами
         return jdbcTemplate.query(queryBuilder.toString(), mapper, params.toArray());
     }
 

@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.testutil;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import java.time.LocalDate;
+
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public final class TestDataUtil {
 
@@ -141,9 +141,9 @@ public final class TestDataUtil {
 
     public static void seedGenreFilmRelations(JdbcTemplate jdbcTemplate) {
         jdbcTemplate.update("""
-        INSERT INTO film (id, name, description, release_date, duration, mpa_id)
-        VALUES (1, 'Film for genre test', 'desc', '2000-01-01', 100, 1)
-    """);
+                    INSERT INTO film (id, name, description, release_date, duration, mpa_id)
+                    VALUES (1, 'Film for genre test', 'desc', '2000-01-01', 100, 1)
+                """);
 
         jdbcTemplate.update("INSERT INTO film_genre (film_id, genre_id) VALUES (1, 2)");
         jdbcTemplate.update("INSERT INTO film_genre (film_id, genre_id) VALUES (1, 6)");

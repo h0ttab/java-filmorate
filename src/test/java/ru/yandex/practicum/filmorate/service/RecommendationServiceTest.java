@@ -76,8 +76,8 @@ public class RecommendationServiceTest {
 
         List<Film> actualRecommendations = recommendationService.getRecommendations(userId);
 
-        assertEquals(expectedRecommendations.size(), actualRecommendations.size(), "Размер списка рекомендаций должен совпадать");
-        assertEquals(expectedRecommendations, actualRecommendations, "Списки рекомендаций должны совпадать");
+        assertEquals(storageRecommendations.size(), actualRecommendations.size(), "Размер списка рекомендаций должен совпадать");
+        assertEquals(storageRecommendations, actualRecommendations, "Списки рекомендаций должны совпадать");
 
         verify(validators).validateUserExists(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
@@ -90,7 +90,7 @@ public class RecommendationServiceTest {
      */
     @Test
     void getRecommendationsEmptyListTest() {
-        List<Film> expectedRecommendations = List.of();
+        List<Film> storageRecommendations = List.of();
 
         doNothing().when(validators).validateUserExists(userId, RecommendationService.class);
         when(recommendationStorage.getRecommendations(userId)).thenReturn(storageRecommendations);

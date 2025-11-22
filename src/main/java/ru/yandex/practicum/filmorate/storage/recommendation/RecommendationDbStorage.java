@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.recommendation;
 
-import java.util.List;
+import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,10 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Реализация хранилища рекомендаций фильмов с использованием базы данных.

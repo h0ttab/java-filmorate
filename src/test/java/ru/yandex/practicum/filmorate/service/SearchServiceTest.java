@@ -1,8 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.util.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,11 +17,6 @@ import ru.yandex.practicum.filmorate.model.dto.ObjectIdDto;
 import ru.yandex.practicum.filmorate.model.dto.film.DirectorDto;
 import ru.yandex.practicum.filmorate.model.dto.film.FilmCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,9 +33,6 @@ public class SearchServiceTest {
     private final UserService userService;
 
     private List<Integer> userIds;
-
-    private Director directorForFirstFilm;
-    private Director directorForSecondAndThirdFilms;
 
     private Film firstFilm;
     private Film secondFilm;
@@ -59,17 +55,12 @@ public class SearchServiceTest {
         // режиссёр для первого фильма
         DirectorDto directorDto1 = new DirectorDto();
         directorDto1.setName("Питер Доктор");
-        directorForFirstFilm = directorService.create(directorDto1);
+        Director directorForFirstFilm = directorService.create(directorDto1);
 
         // режиссёр для второго и третьего фильмов
         DirectorDto directorDto2 = new DirectorDto();
         directorDto2.setName("Роберт Земекис");
-        directorForSecondAndThirdFilms = directorService.create(directorDto2);
-
-        // создаём три фильма с разным количеством лайков:
-        // firstFilm  – 3 лайка
-        // secondFilm – 2 лайка
-        // thirdFilm  – 1 лайк
+        Director directorForSecondAndThirdFilms = directorService.create(directorDto2);
 
         firstFilm = createFilmWithLikes(
                 "Шрек",
