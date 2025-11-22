@@ -1,12 +1,11 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import java.sql.Date;
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,10 +16,10 @@ import ru.yandex.practicum.filmorate.exception.ExceptionType;
 import ru.yandex.practicum.filmorate.exception.LoggedException;
 import ru.yandex.practicum.filmorate.model.User;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserDbStorage implements UserStorage {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<User> mapper = new UserRowMapper();
 
