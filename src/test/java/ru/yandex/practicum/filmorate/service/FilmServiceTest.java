@@ -39,7 +39,6 @@ class FilmServiceTest {
     private Film dramaFilm2020;
     private Film dramaFilm2021;
 
-    // Список пользователей для тестов
     private List<User> testUsers;
 
     /**
@@ -74,23 +73,18 @@ class FilmServiceTest {
             testUsers.add(user);
         }
 
-        // Получаем жанры из базы данных
         Genre comedy = genreService.findById(1); // Комедия
         Genre drama = genreService.findById(2);  // Драма
 
-        // Создаем комедию 2020 года
         comedyFilm2020 = createFilm("Комедия 2020", LocalDate.of(2020, 1, 1),
                 List.of(comedy), 3);
 
-        // Создаем комедию 2021 года
         comedyFilm2021 = createFilm("Комедия 2021", LocalDate.of(2021, 1, 1),
                 List.of(comedy), 1);
 
-        // Создаем драму 2020 года
         dramaFilm2020 = createFilm("Драма 2020", LocalDate.of(2020, 6, 1),
                 List.of(drama), 4);
 
-        // Создаем драму 2021 года
         dramaFilm2021 = createFilm("Драма 2021", LocalDate.of(2021, 6, 1),
                 List.of(drama), 2);
     }
@@ -100,11 +94,9 @@ class FilmServiceTest {
      * и добавления указанного количества лайков
      */
     private Film createFilm(String name, LocalDate releaseDate, List<Genre> genres, int likesCount) {
-        // Создаем ObjectIdDto для MPA (рейтинг G - General Audiences, id = 1)
         ObjectIdDto mpaDto = new ObjectIdDto();
         mpaDto.setId(1);
 
-        // Преобразуем список жанров в список ObjectIdDto
         List<ObjectIdDto> genreDtos = genres.stream()
                 .map(genre -> {
                     ObjectIdDto dto = new ObjectIdDto();
@@ -124,8 +116,6 @@ class FilmServiceTest {
 
         Film film = filmService.create(filmDto);
 
-        // Добавляем лайки фильму, используя созданных пользователей
-        // Убедимся, что у нас достаточно пользователей
         int actualLikesCount = Math.min(likesCount, testUsers.size());
         for (int i = 0; i < actualLikesCount; i++) {
             User user = testUsers.get(i);
@@ -141,23 +131,19 @@ class FilmServiceTest {
      */
     @Test
     void findTopLikedWithoutFilters_shouldReturnFilmsSortedByLikesDesc() {
-        // Вызываем метод без фильтров
         List<Film> topFilms = filmService.findTopLiked(10);
 
-        // Проверяем, что наши тестовые фильмы находятся в правильном порядке относительно друг друга
-        // Получаем индексы наших тестовых фильмов в списке
+
         int dramaFilm2020Index = getFilmIndexInList(topFilms, dramaFilm2020.getId());
         int comedyFilm2020Index = getFilmIndexInList(topFilms, comedyFilm2020.getId());
         int dramaFilm2021Index = getFilmIndexInList(topFilms, dramaFilm2021.getId());
         int comedyFilm2021Index = getFilmIndexInList(topFilms, comedyFilm2021.getId());
 
-        // Проверяем, что все фильмы найдены в списке
         assertThat(dramaFilm2020Index).isNotEqualTo(-1);
         assertThat(comedyFilm2020Index).isNotEqualTo(-1);
         assertThat(dramaFilm2021Index).isNotEqualTo(-1);
         assertThat(comedyFilm2021Index).isNotEqualTo(-1);
 
-        // Проверяем порядок фильмов относительно друг друга
         assertThat(dramaFilm2020Index).isLessThan(comedyFilm2020Index);
         assertThat(comedyFilm2020Index).isLessThan(dramaFilm2021Index);
         assertThat(dramaFilm2021Index).isLessThan(comedyFilm2021Index);
@@ -181,33 +167,28 @@ class FilmServiceTest {
      */
     @Test
     void findTopLikedWithGenreFilter_shouldReturnOnlyFilmsOfSpecifiedGenre() {
-        // Фильтруем по жанру "Комедия" (ID = 1)
         List<Film> comedyFilms = filmService.findTopLiked(10, 1, null);
-        // Проверяем, что наши тестовые комедии присутствуют в результатах
+
         assertThat(comedyFilms).extracting(Film::getId)
                 .contains(comedyFilm2020.getId(), comedyFilm2021.getId());
 
-        // Проверяем, что наши тестовые драмы отсутствуют в результатах
+
         assertThat(comedyFilms).extracting(Film::getId)
                 .doesNotContain(dramaFilm2020.getId(), dramaFilm2021.getId());
 
-        // Проверяем, что комедии отсортированы по лайкам
+
         int comedy2020Index = getFilmIndexInList(comedyFilms, comedyFilm2020.getId());
         int comedy2021Index = getFilmIndexInList(comedyFilms, comedyFilm2021.getId());
         assertThat(comedy2020Index).isLessThan(comedy2021Index);
 
-        // Фильтруем по жанру "Драма" (ID = 2)
         List<Film> dramaFilms = filmService.findTopLiked(10, 2, null);
 
-        // Проверяем, что наши тестовые драмы присутствуют в результатах
         assertThat(dramaFilms).extracting(Film::getId)
                 .contains(dramaFilm2020.getId(), dramaFilm2021.getId());
 
-        // Проверяем, что наши тестовые комедии отсутствуют в результатах
         assertThat(dramaFilms).extracting(Film::getId)
                 .doesNotContain(comedyFilm2020.getId(), comedyFilm2021.getId());
 
-        // Проверяем, что драмы отсортированы по лайкам
         int drama2020Index = getFilmIndexInList(dramaFilms, dramaFilm2020.getId());
         int drama2021Index = getFilmIndexInList(dramaFilms, dramaFilm2021.getId());
         assertThat(drama2020Index).isLessThan(drama2021Index);
@@ -219,10 +200,8 @@ class FilmServiceTest {
      */
     @Test
     void findTopLikedWithYearFilter_shouldReturnOnlyFilmsOfSpecifiedYear() {
-        // Фильтруем по 2020 году
         List<Film> films2020 = filmService.findTopLiked(10, null, 2020);
 
-        // Проверяем, что возвращаются только фильмы 2020 года, отсортированные по лайкам
         assertThat(films2020).hasSize(2);
         assertThat(films2020).extracting(Film::getId)
                 .containsExactly(
@@ -230,10 +209,8 @@ class FilmServiceTest {
                         comedyFilm2020.getId()    // 3 лайка
                 );
 
-        // Фильтруем по 2021 году
         List<Film> films2021 = filmService.findTopLiked(10, null, 2021);
 
-        // Проверяем, что возвращаются только фильмы 2021 года, отсортированные по лайкам
         assertThat(films2021).hasSize(2);
         assertThat(films2021).extracting(Film::getId)
                 .containsExactly(
@@ -248,17 +225,13 @@ class FilmServiceTest {
      */
     @Test
     void findTopLikedWithGenreAndYearFilters_shouldReturnOnlyFilmsOfSpecifiedGenreAndYear() {
-        // Фильтруем по жанру "Комедия" (ID = 1) и 2020 году
         List<Film> comedyFilms2020 = filmService.findTopLiked(10, 1, 2020);
 
-        // Проверяем, что возвращается только комедия 2020 года
         assertThat(comedyFilms2020).hasSize(1);
         assertThat(comedyFilms2020.getFirst().getId()).isEqualTo(comedyFilm2020.getId());
 
-        // Фильтруем по жанру "Драма" (ID = 2) и 2021 году
         List<Film> dramaFilms2021 = filmService.findTopLiked(10, 2, 2021);
 
-        // Проверяем, что возвращается только драма 2021 года
         assertThat(dramaFilms2021).hasSize(1);
         assertThat(dramaFilms2021.getFirst().getId()).isEqualTo(dramaFilm2021.getId());
     }
@@ -269,24 +242,18 @@ class FilmServiceTest {
      */
     @Test
     void findTopLikedWithLimit_shouldReturnLimitedNumberOfFilms() {
-        // Запрашиваем только 2 самых популярных фильма
         List<Film> topTwoFilms = filmService.findTopLiked(2);
 
-        // Проверяем, что возвращается не более 2 фильмов
         assertThat(topTwoFilms).hasSizeLessThanOrEqualTo(2);
 
-        // Проверяем, что драма 2020 (с наибольшим количеством лайков) присутствует в результатах
         boolean containsDrama2020 = topTwoFilms.stream()
                 .anyMatch(film -> film.getId().equals(dramaFilm2020.getId()));
         assertThat(containsDrama2020).isTrue();
 
-        // Запрашиваем только 1 самый популярный фильм с фильтром по жанру "Комедия"
         List<Film> topOneComedyFilm = filmService.findTopLiked(1, 1, null);
 
-        // Проверяем, что возвращается не более 1 фильма
         assertThat(topOneComedyFilm).hasSizeLessThanOrEqualTo(1);
 
-        // Если в результате есть фильмы, проверяем, что это фильм жанра "Комедия"
         if (!topOneComedyFilm.isEmpty()) {
             Film film = topOneComedyFilm.getFirst();
             boolean isComedy = film.getGenres().stream()
@@ -301,7 +268,6 @@ class FilmServiceTest {
      */
     @Test
     void findTopLikedWithInvalidGenreId_shouldThrowNotFoundException() {
-        // Пытаемся фильтровать по несуществующему жанру (ID = 999)
         assertThatThrownBy(() -> filmService.findTopLiked(10, 999, null))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Жанр id=999 не найден");
@@ -313,10 +279,8 @@ class FilmServiceTest {
      */
     @Test
     void findTopLikedWithNonExistentYear_shouldReturnEmptyList() {
-        // Фильтруем по году, для которого нет фильмов (2022)
         List<Film> films2022 = filmService.findTopLiked(10, null, 2022);
 
-        // Проверяем, что возвращается пустой список
         assertThat(films2022).isEmpty();
     }
 
@@ -332,9 +296,6 @@ class FilmServiceTest {
 
         List<Film> commonFilms = filmService.findCommonFilms(userId, friendId);
 
-        // Пользователи 1 и 2 ставят лайки фильмам с likesCount >= 2,
-        // т.е. общие для них фильмы: dramaFilm2020 (4 лайка),
-        // comedyFilm2020 (3 лайка), dramaFilm2021 (2 лайка).
         assertThat(commonFilms)
                 .extracting(Film::getId)
                 .containsExactly(

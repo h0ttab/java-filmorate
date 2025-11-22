@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.recommendation;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;

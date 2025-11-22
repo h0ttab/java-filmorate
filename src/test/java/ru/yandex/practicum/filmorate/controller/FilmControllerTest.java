@@ -3,6 +3,9 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Тесты для FilmController.
  * Включает тесты для эндпоинта /films/popular с различными параметрами.
  */
+@Slf4j
 @ControllerTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmControllerTest {
@@ -198,12 +202,10 @@ public class FilmControllerTest {
 
         assertThat(films).isNotNull().isNotEmpty();
 
-        System.out.println("[DEBUG_LOG] Films in response: " + films);
-        System.out.println("[DEBUG_LOG] Expected film IDs: " +
-                dramaFilm2020.getId() + ", " +
-                comedyFilm2020.getId() + ", " +
-                dramaFilm2021.getId() + ", " +
-                comedyFilm2021.getId());
+        // Выводим информацию о фильмах в ответе для отладки
+        log.debug("Films in response: {}", films);
+        log.debug("Expected film IDs: {}, {}, {}, {}",
+                dramaFilm2020.getId(), comedyFilm2020.getId(), dramaFilm2021.getId(), comedyFilm2021.getId());
 
         boolean containsComedyOrDrama = films.stream()
                 .anyMatch(film -> {
@@ -238,7 +240,7 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Comedy films in response: " + comedyFilms);
+        log.debug("Comedy films in response: {}", comedyFilms);
 
         assertThat(comedyFilms).isNotNull();
         if (!comedyFilms.isEmpty()) {
@@ -268,7 +270,7 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Drama films in response: " + dramaFilms);
+        log.debug("Drama films in response: {}", dramaFilms);
 
         assertThat(dramaFilms).isNotNull();
         if (!dramaFilms.isEmpty()) {
@@ -297,7 +299,6 @@ public class FilmControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     void findTopLiked_withYearParameter_shouldReturnFilmsOfSpecifiedYear() {
-        // 2020 год
         List<Map<String, Object>> films2020 = webTestClient.get()
                 .uri("/films/popular?count=10&year=2020")
                 .exchange()
@@ -306,10 +307,8 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Films from 2020 in response: " + films2020);
-        System.out.println("[DEBUG_LOG] Expected film IDs from 2020: " +
-                dramaFilm2020.getId() + ", " +
-                comedyFilm2020.getId());
+        log.debug("Films from 2020 in response: {}", films2020);
+        log.debug("Expected film IDs from 2020: {}, {}", dramaFilm2020.getId(), comedyFilm2020.getId());
 
         assertThat(films2020).isNotNull();
         if (!films2020.isEmpty()) {
@@ -332,10 +331,8 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Films from 2021 in response: " + films2021);
-        System.out.println("[DEBUG_LOG] Expected film IDs from 2021: " +
-                dramaFilm2021.getId() + ", " +
-                comedyFilm2021.getId());
+        log.debug("Films from 2021 in response: {}", films2021);
+        log.debug("Expected film IDs from 2021: {}, {}", dramaFilm2021.getId(), comedyFilm2021.getId());
 
         assertThat(films2021).isNotNull();
         if (!films2021.isEmpty()) {
@@ -366,8 +363,8 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Comedy films from 2020 in response: " + comedyFilms2020);
-        System.out.println("[DEBUG_LOG] Expected comedy film ID from 2020: " + comedyFilm2020.getId());
+        log.debug("Comedy films from 2020 in response: {}", comedyFilms2020);
+        log.debug("Expected comedy film ID from 2020: {}", comedyFilm2020.getId());
 
         assertThat(comedyFilms2020).isNotNull();
         if (!comedyFilms2020.isEmpty()) {
@@ -389,10 +386,11 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Drama films from 2021 in response: " + dramaFilms2021);
-        System.out.println("[DEBUG_LOG] Expected drama film ID from 2021: " + dramaFilm2021.getId());
+        log.debug("Drama films from 2021 in response: {}", dramaFilms2021);
+        log.debug("Expected drama film ID from 2021: {}", dramaFilm2021.getId());
 
         assertThat(dramaFilms2021).isNotNull();
+
         if (!dramaFilms2021.isEmpty()) {
             boolean containsDramaFilm2021 = dramaFilms2021.stream()
                     .anyMatch(film -> {
@@ -419,7 +417,7 @@ public class FilmControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        System.out.println("[DEBUG_LOG] Top 2 films in response: " + topTwoFilms);
+        log.debug("Top 2 films in response: {}", topTwoFilms);
 
         assertThat(topTwoFilms).isNotNull();
         if (topTwoFilms != null) {

@@ -1,8 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -12,9 +16,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.RecommendationService;
-
-import java.time.LocalDate;
-import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,24 +29,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class RecommendationControllerTest {
 
+    private final Integer userId = 1;
     @Mock
     private RecommendationService recommendationService;
-
     @InjectMocks
     private UserController userController;
-
     private MockMvc mockMvc;
-
     private Film film1;
     private Film film2;
-    private final Integer userId = 1;
 
     @BeforeEach
     void setUp() {
-        // Настраиваем MockMvc
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 
-        // Создаем тестовые фильмы
         film1 = Film.builder()
                 .id(1)
                 .name("Фильм 1")
@@ -72,15 +68,12 @@ public class RecommendationControllerTest {
      */
     @Test
     void getRecommendationsTest() throws Exception {
-        // Подготавливаем данные
         List<Film> recommendations = List.of(film1, film2);
 
-        // Настраиваем поведение мока
         when(recommendationService.getRecommendations(userId)).thenReturn(recommendations);
 
-        // Выполняем запрос и проверяем результат
         mockMvc.perform(get("/users/{id}/recommendations", userId)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(2))
@@ -97,15 +90,12 @@ public class RecommendationControllerTest {
      */
     @Test
     void getRecommendationsEmptyListTest() throws Exception {
-        // Подготавливаем данные
         List<Film> recommendations = List.of();
 
-        // Настраиваем поведение мока
         when(recommendationService.getRecommendations(userId)).thenReturn(recommendations);
 
-        // Выполняем запрос и проверяем результат
         mockMvc.perform(get("/users/{id}/recommendations", userId)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
