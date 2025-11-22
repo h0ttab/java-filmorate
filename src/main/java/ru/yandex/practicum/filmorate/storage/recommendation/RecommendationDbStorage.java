@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Реализация хранилища рекомендаций фильмов с использованием базы данных.
  */
@@ -85,7 +89,13 @@ public class RecommendationDbStorage implements RecommendationStorage {
                 LIMIT 10;
                 """;
 
-        List<Film> recommendations = jdbcTemplate.query(query, filmRowMapper, userId, userId);
+        List<Film> rawRecommendations = jdbcTemplate.query(query, filmRowMapper, userId, userId);
+
+        Set<Integer> likedFilmIds = new HashSet<>(userLikedFilms);
+        List<Film> recommendations = rawRecommendations.stream()
+                .filter(film -> !likedFilmIds.contains(film.getId()))
+                .toList();
+
         log.info("Сформированы рекомендации для пользователя с id {}: {} фильмов", userId, recommendations.size());
         return recommendations;
     }

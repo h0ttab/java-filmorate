@@ -29,6 +29,10 @@ public class RecommendationServiceTest {
     private RecommendationStorage recommendationStorage;
     @Mock
     private Validators validators;
+
+    @Mock
+    private FilmService filmService;   // добавили мок FilmService
+
     @InjectMocks
     private RecommendationService recommendationService;
     private Film film1;
@@ -62,10 +66,13 @@ public class RecommendationServiceTest {
      */
     @Test
     void getRecommendationsTest() {
-        List<Film> expectedRecommendations = List.of(film1, film2);
+        // Подготавливаем данные
+        List<Film> storageRecommendations = List.of(film1, film2);
 
         doNothing().when(validators).validateUserExists(userId, RecommendationService.class);
-        when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
+        when(recommendationStorage.getRecommendations(userId)).thenReturn(storageRecommendations);
+        // RecommendationService делегирует обогащение фильмов в filmService.addAttributes(...)
+        when(filmService.addAttributes(storageRecommendations)).thenReturn(storageRecommendations);
 
         List<Film> actualRecommendations = recommendationService.getRecommendations(userId);
 
@@ -74,6 +81,7 @@ public class RecommendationServiceTest {
 
         verify(validators).validateUserExists(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
+        verify(filmService).addAttributes(storageRecommendations);
     }
 
     /**
@@ -85,7 +93,8 @@ public class RecommendationServiceTest {
         List<Film> expectedRecommendations = List.of();
 
         doNothing().when(validators).validateUserExists(userId, RecommendationService.class);
-        when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
+        when(recommendationStorage.getRecommendations(userId)).thenReturn(storageRecommendations);
+        when(filmService.addAttributes(storageRecommendations)).thenReturn(storageRecommendations);
 
         List<Film> actualRecommendations = recommendationService.getRecommendations(userId);
 
@@ -93,5 +102,6 @@ public class RecommendationServiceTest {
 
         verify(validators).validateUserExists(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
+        verify(filmService).addAttributes(storageRecommendations);
     }
 }
