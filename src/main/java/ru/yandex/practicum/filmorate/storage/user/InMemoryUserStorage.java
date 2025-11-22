@@ -84,13 +84,6 @@ public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implement
         if (userA.isPresent() && userB.isPresent()) {
             userA.get().getFriends().put(userIdB, FriendStatus.PENDING);
         } else {
-            int missingId;
-
-            if (userA.isEmpty()) {
-                missingId = userIdA;
-            } else {
-                missingId = userIdB;
-            }
             LoggedException.throwNew(ExceptionType.INVALID_FRIENDSHIP_ADD, getClass(), List.of(userIdA, userIdB));
         }
     }

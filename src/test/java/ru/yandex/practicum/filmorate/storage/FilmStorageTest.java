@@ -130,9 +130,6 @@ public class FilmStorageTest {
 
     @Test
     public void testFindCommonFilms_shouldReturnIntersectionSortedByPopularity() {
-        // Иван (id=1) и Мария (id=2) совместно лайкнули фильмы 1 и 3.
-        // По данным data.sql: у фильма 3 три лайка, у фильма 1 — два,
-        // поэтому порядок по популярности должен быть [3, 1].
         List<Film> films = storage.findCommonFilms(1, 2);
 
         assertThat(films)

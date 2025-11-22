@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import java.util.*;
 
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,11 @@ public class LikeService {
     private final FeedService feedService;
 
     public void addLike(Integer filmId, Integer userId) {
-        validators.validateLikeNotExists(filmId, userId, getClass());
+        try {
+            validators.validateLikeNotExists(filmId, userId, getClass());
+        } catch (ValidationException e) {
+            log.warn(e.getMessage());
+        }
         likeStorage.addLike(filmId, userId);
         feedService.save(userId, LIKE, ADD, filmId);
     }
