@@ -80,7 +80,9 @@ public class FilmMapper {
         }
 
         if (Optional.ofNullable(dto.getMpa()).isPresent()) {
-            validators.validateMpaExists(dto.getMpa().getId(), getClass());
+            Integer mpaId = dto.getMpa().getId();
+            validators.validateMpaExists(mpaId, getClass());
+            filmBuilder.mpa(mpaService.findById(mpaId));
         }
 
         if (Optional.ofNullable(dto.getDirectors()).isPresent()) {

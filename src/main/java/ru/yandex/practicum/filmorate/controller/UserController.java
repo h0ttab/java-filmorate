@@ -6,9 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.model.dto.user.UserCreateDto;
 import ru.yandex.practicum.filmorate.model.dto.user.UserUpdateDto;
 import ru.yandex.practicum.filmorate.service.RecommendationService;
@@ -82,7 +80,7 @@ public class UserController {
      * 1. Находим пользователей с максимальным количеством пересечения по лайкам.
      * 2. Определяем фильмы, которые один пролайкал, а другой нет.
      * 3. Рекомендуем фильмы, которым поставил лайк пользователь с похожими вкусами,
-     *    а тот, для кого составляется рекомендация, ещё не поставил.
+     * а тот, для кого составляется рекомендация, ещё не поставил.
      *
      * @param id идентификатор пользователя
      * @return список рекомендованных фильмов

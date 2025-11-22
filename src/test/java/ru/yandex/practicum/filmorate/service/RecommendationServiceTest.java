@@ -1,8 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -10,9 +14,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.recommendation.RecommendationStorage;
 import ru.yandex.practicum.filmorate.util.Validators;
-
-import java.time.LocalDate;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -23,22 +24,22 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class RecommendationServiceTest {
 
+    private final Integer userId = 1;
     @Mock
     private RecommendationStorage recommendationStorage;
-
     @Mock
     private Validators validators;
 
+    @Mock
+    private FilmService filmService;   // добавили мок FilmService
+
     @InjectMocks
     private RecommendationService recommendationService;
-
     private Film film1;
     private Film film2;
-    private final Integer userId = 1;
 
     @BeforeEach
     void setUp() {
-        // Создаем тестовые фильмы
         film1 = Film.builder()
                 .id(1)
                 .name("Фильм 1")
@@ -66,22 +67,21 @@ public class RecommendationServiceTest {
     @Test
     void getRecommendationsTest() {
         // Подготавливаем данные
-        List<Film> expectedRecommendations = List.of(film1, film2);
+        List<Film> storageRecommendations = List.of(film1, film2);
 
-        // Настраиваем поведение моков
         doNothing().when(validators).validateUserExists(userId, RecommendationService.class);
-        when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
+        when(recommendationStorage.getRecommendations(userId)).thenReturn(storageRecommendations);
+        // RecommendationService делегирует обогащение фильмов в filmService.addAttributes(...)
+        when(filmService.addAttributes(storageRecommendations)).thenReturn(storageRecommendations);
 
-        // Вызываем тестируемый метод
         List<Film> actualRecommendations = recommendationService.getRecommendations(userId);
 
-        // Проверяем результат
-        assertEquals(expectedRecommendations.size(), actualRecommendations.size(), "Размер списка рекомендаций должен совпадать");
-        assertEquals(expectedRecommendations, actualRecommendations, "Списки рекомендаций должны совпадать");
+        assertEquals(storageRecommendations.size(), actualRecommendations.size(), "Размер списка рекомендаций должен совпадать");
+        assertEquals(storageRecommendations, actualRecommendations, "Списки рекомендаций должны совпадать");
 
-        // Проверяем, что методы моков были вызваны с правильными параметрами
         verify(validators).validateUserExists(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
+        verify(filmService).addAttributes(storageRecommendations);
     }
 
     /**
@@ -90,21 +90,18 @@ public class RecommendationServiceTest {
      */
     @Test
     void getRecommendationsEmptyListTest() {
-        // Подготавливаем данные
-        List<Film> expectedRecommendations = List.of();
+        List<Film> storageRecommendations = List.of();
 
-        // Настраиваем поведение моков
         doNothing().when(validators).validateUserExists(userId, RecommendationService.class);
-        when(recommendationStorage.getRecommendations(userId)).thenReturn(expectedRecommendations);
+        when(recommendationStorage.getRecommendations(userId)).thenReturn(storageRecommendations);
+        when(filmService.addAttributes(storageRecommendations)).thenReturn(storageRecommendations);
 
-        // Вызываем тестируемый метод
         List<Film> actualRecommendations = recommendationService.getRecommendations(userId);
 
-        // Проверяем результат
         assertEquals(0, actualRecommendations.size(), "Размер списка рекомендаций должен быть 0");
 
-        // Проверяем, что методы моков были вызваны с правильными параметрами
         verify(validators).validateUserExists(userId, RecommendationService.class);
         verify(recommendationStorage).getRecommendations(userId);
+        verify(filmService).addAttributes(storageRecommendations);
     }
 }

@@ -194,7 +194,6 @@ public class FilmDbStorage implements FilmStorage {
         // Добавляем параметр limit
         params.add(count);
 
-        // Выполняем запрос с параметрами
         return jdbcTemplate.query(queryBuilder.toString(), mapper, params.toArray());
     }
 
@@ -210,8 +209,8 @@ public class FilmDbStorage implements FilmStorage {
             case LIKES -> {
                 query = """
                         SELECT f.* FROM film f
-                        JOIN film_director fd ON f.id = fd.film_id
-                        JOIN "like" l ON f.id = l.film_id
+                        LEFT JOIN film_director fd ON f.id = fd.film_id
+                        LEFT JOIN "like" l ON f.id = l.film_id
                         WHERE fd.director_id = ?
                         GROUP BY f.id
                         ORDER BY count(DISTINCT l.user_id) DESC;
